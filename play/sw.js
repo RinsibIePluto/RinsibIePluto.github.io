@@ -14,8 +14,9 @@ self.addEventListener("fetch", e => {
   if (req.method !== "GET") return;
   const url = new URL(req.url);
   if (req.mode === "navigate") {
-    /* network first so new versions arrive; cached copy when offline */
-    e.respondWith(fetch(req).then(res => put("./index.html", res)).catch(() => caches.match("./index.html")));
+    /* network first, and always ask the server whether there's a newer page (no 10-minute browser cache);
+       cached copy when offline */
+    e.respondWith(fetch(req, { cache: "no-cache" }).then(res => put("./index.html", res)).catch(() => caches.match("./index.html")));
     return;
   }
   if (url.origin === location.origin || url.hostname.endsWith("fonts.googleapis.com") || url.hostname.endsWith("fonts.gstatic.com")) {
