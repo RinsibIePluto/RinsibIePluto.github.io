@@ -56,14 +56,20 @@ button:focus-visible,input:focus-visible{outline:2px solid var(--lamp);outline-o
   .sb-home{gap:8px}.sb-icon{width:28px;height:28px}.sb-word{font-size:18px}
   .sb-links{gap:0}.sb-links a,.sb-links b{font-size:14px;padding:7px 9px}
 }
-/* very short screens: give the board the room (the same links are in the menu); the status-bar inset stays */
-@media (max-height:709px){.sb-in{display:none}.sitebar{border-bottom:0;background:none}.app{padding-top:5px}}
+/* shorter screens (a phone browser with its address bar): the same bar, a little slimmer */
+@media (max-height:759px){
+  .sb-in{height:46px}.sb-icon{width:24px;height:24px}.sb-word{font-size:16px}
+  .sb-links a,.sb-links b{padding:5px 9px}
+  .app{padding-top:6px}
+}
+/* very small screens: give the board the room (the same links are in the menu); the status-bar inset stays */
+@media (max-height:654px){.sb-in{display:none}.sitebar{border-bottom:0;background:none}.app{padding-top:5px}}
 /* with the bar showing, it carries the brand: the game header shows just the puzzle number and date */
-@media (min-height:710px){
+@media (min-height:655px){
   header.top .logo-mark,header.top .logo{display:none}
   header.top .edition{margin-top:0;font-size:11px;letter-spacing:.1em;color:var(--brass)}
 }
-@media (min-height:710px) and (max-width:380px){header.top .edition{font-size:9.5px;letter-spacing:.04em}}
+@media (min-height:655px) and (max-width:380px){header.top .edition{font-size:9.5px;letter-spacing:.04em}}
 
 
 /* Brand mark (one SVG sprite, reused by the header, the intro and the app icons) */
