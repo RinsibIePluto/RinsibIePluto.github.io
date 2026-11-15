@@ -48,8 +48,12 @@ button:focus-visible,input:focus-visible{outline:2px solid var(--lamp);outline-o
 .sb-mark{display:none}
 .sb-word{display:none}
 .sb-links{display:flex;align-items:center;gap:2px}
-.native .sb-home{display:none}            /* in the app the bar is just Ciphers · About · Play */
-.native .sb-in{justify-content:flex-end}
+/* in the app the bar is three equal tabs: Play · Ciphers · About */
+.native .sb-home{display:none}
+.native .sb-in{padding:0 10px}
+.native .sb-links{flex:1;display:grid;grid-template-columns:repeat(3,1fr);gap:6px}
+.native .sb-links a,.native .sb-links b{display:flex;align-items:center;justify-content:center;height:28px;padding:0;margin:0;border-radius:8px;background:#1a1512;border:1px solid var(--line);font-size:12px;letter-spacing:.06em}
+.native .sb-links b{order:-1;background:var(--brass);border-color:var(--brass);color:#1a1410}
 .sb-links a,.sb-links b{font-size:12px;font-weight:700;letter-spacing:.05em;padding:5px 10px;border-radius:999px;text-decoration:none;color:var(--ivory)}
 .sb-links b{background:var(--brass);color:#1a1410;margin-left:2px}
 /* very short screens: give the board the room (the same links are in the menu); the status-bar inset stays */
