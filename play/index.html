@@ -50,6 +50,8 @@ button:focus-visible,input:focus-visible{outline:2px solid var(--lamp);outline-o
 .sb-links{display:flex;align-items:center;gap:6px}
 .sb-links a,.sb-links b{font-family:system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;font-size:15px;font-weight:600;line-height:1.65;letter-spacing:0;padding:8px 12px;border-radius:999px;text-decoration:none;color:#efe5cf}
 .sb-links a:hover{color:var(--lamp)}
+.sb-install{display:none}
+@media (min-width:600px){.sb-links a.sb-install:not([hidden]){display:inline;color:var(--lamp)}}
 .sb-links b{background:var(--brass);color:#1b1511;margin-left:4px}
 @media (max-width:520px){
   .sb-in{height:54px;padding:0 12px}
@@ -431,7 +433,7 @@ body.cb .chip.won,body.cb .bar.hi{background:var(--correct)}
 </div>
 <nav class="sitebar" aria-label="Cyrune website"><div class="sb-in">
   <a class="sb-home" href="https://cyrune.app/" data-site="" aria-label="Cyrune home"><img class="sb-icon" src="icons/icon-192.png" alt="" width="34" height="34" onerror="this.remove()"><span class="sb-word">CYRUNE</span></a>
-  <span class="sb-links"><a href="https://cyrune.app/ciphers/" data-site="ciphers/">Ciphers</a><a href="https://cyrune.app/about/" data-site="about/">About</a><b aria-current="page">Play</b></span>
+  <span class="sb-links"><a id="sbInstall" class="sb-install" href="#" hidden>Install</a><a href="https://cyrune.app/ciphers/" data-site="ciphers/">Ciphers</a><a href="https://cyrune.app/about/" data-site="about/">About</a><b aria-current="page">Play</b></span>
 </div></nav>
 <div class="app" id="app">
   <header class="top">
@@ -887,7 +889,8 @@ function ensureToday(){
 const pad3=n=>String(n).padStart(3,"0");
 function renderHeader(){
   const ed=$("#edition");
-  const inst=deferredPrompt?` · <button type="button" data-act="install">Install</button>`:"";
+  const inst="";   /* Install lives in the menu and the top bar now (it didn't fit beside the date) */
+  const si=$("#sbInstall");if(si)si.hidden=!(deferredPrompt&&!isNative());
   const fmtD=n=>nDate(n).toLocaleDateString("en-GB",{day:"numeric",month:"short"});
   if(state.mode==="daily")ed.innerHTML=`No. ${pad3(state.daily.n)} · ${fmtD(state.daily.n)}${inst}`;
   else if(state.mode==="archive")ed.innerHTML=`Past · ${fmtD(state.archiveN)}`;
@@ -1438,6 +1441,7 @@ function menuHTML(){
   const wk=weekendNo(todayN()),native=isNative();
   const sw=(k,label,small)=>`<div class="setting"><div class="st"><b>${label}</b><small>${small}</small></div><button class="switch" role="switch" aria-checked="${!!settings[k]}" data-set="${k}" aria-label="${label}"></button></div>`;
   return `<div class="mnav">
+    ${!native&&deferredPrompt?`<button class="gold" data-act="install">Install Cyrune <span>home screen app</span></button>`:""}
     <button data-menu="guide">Cipher guide <span>${GUIDE_ORDER.length} ciphers</span></button>
     <button data-menu="archive">Past puzzles <span>calendar</span></button>
     ${wk?`<button class="gold" data-menu="weekend">Weekend challenge <span>★★★★★</span></button>`:""}
@@ -1457,7 +1461,6 @@ function menuHTML(){
   ${native?sw("remind","Daily reminder","A notification when the new puzzle is ready.")+(settings.remind?`<div class="setting"><div class="st"><b>Remind me at</b></div><input type="time" id="remindTime" value="${settings.remindTime}" aria-label="Reminder time"></div>`:"")
     :`<div class="setting"><div class="st"><b>Daily reminder</b><small>Available in the Android app.</small></div></div>`}
   ${native&&adPrivacy?`<div class="setting"><div class="st"><b>Ad privacy choices</b><small>Change what you agreed to for personalised ads.</small></div><button class="btn alt" data-menu="adprivacy">Open</button></div>`:""}
-  ${!native&&deferredPrompt?`<div class="actions"><button class="btn alt" data-act="install">Install the app</button></div>`:""}
   <p class="ver" id="appVer">${native?"Cyrune · Android app":"Cyrune · web version"}</p>`;
 }
 function openMenu(){$("#menuBody").innerHTML=menuHTML();showModal("menuModal");
@@ -1830,6 +1833,7 @@ function bind(){
   document.addEventListener("click",e=>{const a=e.target.closest&&e.target.closest("a[data-site]");
     if(a&&isNative()){e.preventDefault();e.stopPropagation();openReader(a.dataset.site);}},true);
   $("#readerFrame").addEventListener("load",readerLoaded);
+  $("#sbInstall").addEventListener("click",e=>{e.preventDefault();doInstall();});
   $("#kb").addEventListener("click",e=>{const b=e.target.closest("[data-key]");if(b)onKey(b.dataset.key);});
   $("#strip").addEventListener("click",e=>{
     const gd=e.target.closest("[data-guide]");if(gd){openGuide(gd.dataset.guide);return;}
