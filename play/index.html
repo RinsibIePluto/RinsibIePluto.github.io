@@ -41,25 +41,24 @@ button{font:inherit;color:inherit;background:none;border:0;cursor:pointer;touch-
 button:focus-visible,input:focus-visible{outline:2px solid var(--lamp);outline-offset:2px}
 .app{flex:1 1 auto;min-height:0;max-height:940px;width:100%;max-width:520px;margin:auto;display:flex;flex-direction:column;gap:7px;
   padding:5px 12px calc(8px + var(--safe-area-inset-bottom,env(safe-area-inset-bottom,0px)))}
-/* website bar across the top (the same menu as cyrune.app); it also carries the status-bar inset in the app */
-.sitebar{flex:none;padding-top:var(--safe-area-inset-top,env(safe-area-inset-top,0px));border-bottom:1px solid rgba(192,155,96,.18);background:rgba(13,10,8,.5)}
-.sb-in{max-width:1120px;margin:0 auto;height:36px;padding:0 10px;display:flex;align-items:center;justify-content:space-between;gap:8px}
-.sb-home{display:flex;align-items:center;gap:9px;color:var(--dim);text-decoration:none;font-family:var(--f-mono);font-size:11px;font-weight:600;letter-spacing:.08em}
-.sb-mark{display:none}
-.sb-word{font-family:var(--f-display);font-weight:400;font-size:17px;letter-spacing:.12em;color:var(--brass)}
-.sb-url{display:none}
-.sb-links{display:flex;align-items:center;gap:2px}
-.sb-links a,.sb-links b{font-size:12px;font-weight:700;letter-spacing:.05em;padding:5px 10px;border-radius:999px;text-decoration:none;color:var(--ivory)}
-.sb-links b{background:var(--brass);color:#1a1410;margin-left:2px}
-/* very short screens: give the board the room (the same links are in the menu); the status-bar inset stays */
-@media (max-height:689px){.sb-in{display:none}.sitebar{border-bottom:0;background:none}}
-@media (min-width:760px){
-  .sb-in{height:60px;padding:0 20px}
-  .sb-mark{display:block;width:32px;height:32px}
-  .sb-word{font-size:22px}
-  .sb-links a,.sb-links b{font-size:15px;font-weight:600;letter-spacing:0;padding:8px 13px}
-  .sb-links a:hover{color:var(--lamp)}
+/* website bar across the top: the same header as cyrune.app (sizes, fonts, colours); it also carries the status-bar inset in the app */
+.sitebar{flex:none;padding-top:var(--safe-area-inset-top,env(safe-area-inset-top,0px));border-bottom:1px solid rgba(192,155,96,.2);background:rgba(13,10,8,.55)}
+.sb-in{max-width:1120px;margin:0 auto;height:60px;padding:0 20px;display:flex;align-items:center;justify-content:space-between;gap:12px}
+.sb-home{display:flex;align-items:center;gap:10px;text-decoration:none}
+.sb-icon{display:block;width:34px;height:34px;border-radius:9px}
+.sb-word{font-family:var(--f-display);font-weight:400;font-size:22px;letter-spacing:.12em;color:var(--brass);line-height:1}
+.sb-links{display:flex;align-items:center;gap:6px}
+.sb-links a,.sb-links b{font-family:system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;font-size:15px;font-weight:600;line-height:1.65;letter-spacing:0;padding:8px 12px;border-radius:999px;text-decoration:none;color:#efe5cf}
+.sb-links a:hover{color:var(--lamp)}
+.sb-links b{background:var(--brass);color:#1b1511;margin-left:4px}
+@media (max-width:520px){
+  .sb-in{height:54px;padding:0 12px}
+  .sb-home{gap:8px}.sb-icon{width:28px;height:28px}.sb-word{font-size:18px}
+  .sb-links{gap:0}.sb-links a,.sb-links b{font-size:14px;padding:7px 9px}
 }
+/* very short screens: give the board the room (the same links are in the menu); the status-bar inset stays */
+@media (max-height:709px){.sb-in{display:none}.sitebar{border-bottom:0;background:none}}
+
 
 /* Brand mark (one SVG sprite, reused by the header, the intro and the app icons) */
 .sprite{position:absolute;width:0;height:0;overflow:hidden}
@@ -419,7 +418,7 @@ body.cb .chip.won,body.cb .bar.hi{background:var(--correct)}
   <div class="boot-hint">Tap to skip</div>
 </div>
 <nav class="sitebar" aria-label="Cyrune website"><div class="sb-in">
-  <a class="sb-home" href="https://cyrune.app/" data-site="" aria-label="Cyrune home"><svg class="sb-mark" viewBox="0 0 512 512" aria-hidden="true"><use href="#cy-ring"/><use href="#cy-lamp"/></svg><span class="sb-word">CYRUNE</span><span class="sb-url">cyrune.app</span></a>
+  <a class="sb-home" href="https://cyrune.app/" data-site="" aria-label="Cyrune home"><img class="sb-icon" src="icons/icon-192.png" alt="" width="34" height="34" onerror="this.remove()"><span class="sb-word">CYRUNE</span></a>
   <span class="sb-links"><a href="https://cyrune.app/ciphers/" data-site="ciphers/">Ciphers</a><a href="https://cyrune.app/about/" data-site="about/">About</a><b aria-current="page">Play</b></span>
 </div></nav>
 <div class="app" id="app">
