@@ -40,7 +40,7 @@ body{background:radial-gradient(120% 70% at 50% -10%,#2a211b 0%,rgba(21,17,15,0)
 button{font:inherit;color:inherit;background:none;border:0;cursor:pointer;touch-action:manipulation;-webkit-tap-highlight-color:transparent}
 button:focus-visible,input:focus-visible{outline:2px solid var(--lamp);outline-offset:2px}
 .app{flex:1 1 auto;min-height:0;max-height:940px;width:100%;max-width:520px;margin:auto;display:flex;flex-direction:column;gap:7px;
-  padding:5px 12px calc(8px + var(--safe-area-inset-bottom,env(safe-area-inset-bottom,0px)))}
+  padding:12px 12px calc(8px + var(--safe-area-inset-bottom,env(safe-area-inset-bottom,0px)))}
 /* website bar across the top: the same header as cyrune.app (sizes, fonts, colours); it also carries the status-bar inset in the app */
 .sitebar{flex:none;padding-top:var(--safe-area-inset-top,env(safe-area-inset-top,0px));border-bottom:1px solid rgba(192,155,96,.2);background:rgba(13,10,8,.55)}
 .sb-in{max-width:1120px;margin:0 auto;height:60px;padding:0 20px;display:flex;align-items:center;justify-content:space-between;gap:12px}
@@ -57,7 +57,13 @@ button:focus-visible,input:focus-visible{outline:2px solid var(--lamp);outline-o
   .sb-links{gap:0}.sb-links a,.sb-links b{font-size:14px;padding:7px 9px}
 }
 /* very short screens: give the board the room (the same links are in the menu); the status-bar inset stays */
-@media (max-height:709px){.sb-in{display:none}.sitebar{border-bottom:0;background:none}}
+@media (max-height:709px){.sb-in{display:none}.sitebar{border-bottom:0;background:none}.app{padding-top:5px}}
+/* with the bar showing, it carries the brand: the game header shows just the puzzle number and date */
+@media (min-height:710px){
+  header.top .logo-mark,header.top .logo{display:none}
+  header.top .edition{margin-top:0;font-size:11px;letter-spacing:.1em;color:var(--brass)}
+}
+@media (min-height:710px) and (max-width:380px){header.top .edition{font-size:9.5px;letter-spacing:.04em}}
 
 
 /* Brand mark (one SVG sprite, reused by the header, the intro and the app icons) */
