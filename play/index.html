@@ -46,14 +46,9 @@ button:focus-visible,input:focus-visible{outline:2px solid var(--lamp);outline-o
 .sb-in{max-width:1120px;margin:0 auto;height:36px;padding:0 10px;display:flex;align-items:center;justify-content:space-between;gap:8px}
 .sb-home{display:flex;align-items:center;gap:9px;color:var(--dim);text-decoration:none;font-family:var(--f-mono);font-size:11px;font-weight:600;letter-spacing:.08em}
 .sb-mark{display:none}
-.sb-word{display:none}
+.sb-word{font-family:var(--f-display);font-weight:400;font-size:17px;letter-spacing:.12em;color:var(--brass)}
+.sb-url{display:none}
 .sb-links{display:flex;align-items:center;gap:2px}
-/* in the app the bar is three equal tabs: Play · Ciphers · About */
-.native .sb-home{display:none}
-.native .sb-in{padding:0 10px}
-.native .sb-links{flex:1;display:grid;grid-template-columns:repeat(3,1fr);gap:6px}
-.native .sb-links a,.native .sb-links b{display:flex;align-items:center;justify-content:center;height:28px;padding:0;margin:0;border-radius:8px;background:#1a1512;border:1px solid var(--line);font-size:12px;letter-spacing:.06em}
-.native .sb-links b{order:-1;background:var(--brass);border-color:var(--brass);color:#1a1410}
 .sb-links a,.sb-links b{font-size:12px;font-weight:700;letter-spacing:.05em;padding:5px 10px;border-radius:999px;text-decoration:none;color:var(--ivory)}
 .sb-links b{background:var(--brass);color:#1a1410;margin-left:2px}
 /* very short screens: give the board the room (the same links are in the menu); the status-bar inset stays */
@@ -61,8 +56,7 @@ button:focus-visible,input:focus-visible{outline:2px solid var(--lamp);outline-o
 @media (min-width:760px){
   .sb-in{height:60px;padding:0 20px}
   .sb-mark{display:block;width:32px;height:32px}
-  .sb-word{display:inline;font-family:var(--f-display);font-weight:400;font-size:22px;letter-spacing:.12em;color:var(--brass)}
-  .sb-url{display:none}
+  .sb-word{font-size:22px}
   .sb-links a,.sb-links b{font-size:15px;font-weight:600;letter-spacing:0;padding:8px 13px}
   .sb-links a:hover{color:var(--lamp)}
 }
@@ -425,7 +419,7 @@ body.cb .chip.won,body.cb .bar.hi{background:var(--correct)}
   <div class="boot-hint">Tap to skip</div>
 </div>
 <nav class="sitebar" aria-label="Cyrune website"><div class="sb-in">
-  <a class="sb-home" href="https://cyrune.app/" data-site="about/"><svg class="sb-mark" viewBox="0 0 512 512" aria-hidden="true"><use href="#cy-ring"/><use href="#cy-lamp"/></svg><span class="sb-word">CYRUNE</span><span class="sb-url">cyrune.app</span></a>
+  <a class="sb-home" href="https://cyrune.app/" data-site="" aria-label="Cyrune home"><svg class="sb-mark" viewBox="0 0 512 512" aria-hidden="true"><use href="#cy-ring"/><use href="#cy-lamp"/></svg><span class="sb-word">CYRUNE</span><span class="sb-url">cyrune.app</span></a>
   <span class="sb-links"><a href="https://cyrune.app/ciphers/" data-site="ciphers/">Ciphers</a><a href="https://cyrune.app/about/" data-site="about/">About</a><b aria-current="page">Play</b></span>
 </div></nav>
 <div class="app" id="app">
@@ -1661,7 +1655,8 @@ const GUIDE={
 function pigRow(w){return `<span class="pgrow">${[...w].map(c=>`<span class="pg">${pigSVG(c)}</span>`).join("")}</span>`;}
 const SITE="https://cyrune.app";
 /* website links: in the Android app they point at the pages bundled in the app (never the browser) */
-const siteURL=p=>isNative()?"/site/"+p.replace(/\/$/,"/index.html"):SITE+"/"+p;
+const sitePage=p=>"/site/"+(p===""||p.endsWith("/")?p+"index.html":p);
+const siteURL=p=>isNative()?sitePage(p):SITE+"/"+p;
 const WEB_SLUG={shift:"shift-cipher",railfence:"rail-fence-cipher",pigpen:"pigpen-cipher",autokey:"autokey-cipher",morse:"morse-code",scramble:"shift-and-scramble",vig:"vigenere-cipher",beaufort:"beaufort-cipher",affine:"affine-cipher",keyword:"keyword-cipher",sub:"substitution-cipher",polybius:"polybius-square",adfgvx:"adfgvx-cipher",running:"running-key-cipher",playfair:"playfair-cipher",bifid:"bifid-cipher",enigma:"enigma-machine"};
 function guideHTML(){
   const todayType=dailyType(state.daily.n);
@@ -1717,7 +1712,7 @@ let readerStack=[],readerSkip=false;
 function openReader(path){
   const r=$("#reader"),f=$("#readerFrame");readerStack=[];readerSkip=false;
   if(openModal)hideModal();
-  f.src="/site/"+path.replace(/\/$/,"/index.html");r.hidden=false;pauseTimer();
+  f.src=sitePage(path);r.hidden=false;pauseTimer();
 }
 function closeReader(){const r=$("#reader");if(r.hidden)return;r.hidden=true;$("#readerFrame").src="about:blank";readerStack=[];resumeTimer();}
 function readerBack(){
