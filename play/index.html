@@ -320,6 +320,10 @@ a.btn{display:inline-flex;align-items:center;text-decoration:none}
 .cday.cur{background:#2d241c}
 .legend.cal{grid-template-columns:repeat(3,auto);display:grid;justify-content:start;gap:12px;margin-top:12px}
 .coach{position:fixed;inset:0;z-index:90}
+/* Android app: the website's guides and About page, bundled in the app and shown full screen (works offline) */
+.reader{position:fixed;inset:0;z-index:95;background:#15110f;padding:var(--safe-area-inset-top,env(safe-area-inset-top,0px)) 0 var(--safe-area-inset-bottom,env(safe-area-inset-bottom,0px))}
+.reader[hidden]{display:none}
+.reader iframe{display:block;width:100%;height:100%;border:0;background:#15110f}
 .coach-spot{position:fixed;border-radius:12px;box-shadow:0 0 0 9999px rgba(8,6,5,.78);outline:2px solid var(--lamp);transition:all .25s ease;pointer-events:none}
 .coach-card{position:fixed;left:16px;right:16px;max-width:440px;margin:0 auto;background:var(--case);border:1px solid var(--brass);border-radius:12px;padding:14px;box-shadow:0 14px 40px rgba(0,0,0,.6)}
 .coach-card p{font-size:14px;line-height:1.5;color:#e2d8c2}
@@ -414,8 +418,8 @@ body.cb .chip.won,body.cb .bar.hi{background:var(--correct)}
   <div class="boot-hint">Tap to skip</div>
 </div>
 <nav class="sitebar" aria-label="Cyrune website"><div class="sb-in">
-  <a class="sb-home" href="https://cyrune.app/"><svg class="sb-mark" viewBox="0 0 512 512" aria-hidden="true"><use href="#cy-ring"/><use href="#cy-lamp"/></svg><span class="sb-word">CYRUNE</span><span class="sb-url">cyrune.app</span></a>
-  <span class="sb-links"><a href="https://cyrune.app/ciphers/">Ciphers</a><a href="https://cyrune.app/about/">About</a><b aria-current="page">Play</b></span>
+  <a class="sb-home" href="https://cyrune.app/" data-site="about/"><svg class="sb-mark" viewBox="0 0 512 512" aria-hidden="true"><use href="#cy-ring"/><use href="#cy-lamp"/></svg><span class="sb-word">CYRUNE</span><span class="sb-url">cyrune.app</span></a>
+  <span class="sb-links"><a href="https://cyrune.app/ciphers/" data-site="ciphers/">Ciphers</a><a href="https://cyrune.app/about/" data-site="about/">About</a><b aria-current="page">Play</b></span>
 </div></nav>
 <div class="app" id="app">
   <header class="top">
@@ -495,6 +499,7 @@ body.cb .chip.won,body.cb .bar.hi{background:var(--correct)}
   </div>
 </div>
 
+<div class="reader" id="reader" hidden><iframe id="readerFrame" title="Cyrune guides"></iframe></div>
 <div class="coach" id="coach" hidden><div class="coach-spot" id="coachSpot"></div><div class="coach-card" id="coachCard" role="dialog" aria-live="polite"></div></div>
 
 <div class="modal" id="chartModal" hidden>
@@ -1425,8 +1430,8 @@ function menuHTML(){
     <button data-menu="archive">Past puzzles <span>calendar</span></button>
     ${wk?`<button class="gold" data-menu="weekend">Weekend challenge <span>★★★★★</span></button>`:""}
     <button data-menu="walk">Show the walkthrough <span>${TYPES[P.type].short}</span></button>
-    <a href="${SITE}/ciphers/">Full cipher guides <span>cyrune.app ↗</span></a>
-    <a href="${SITE}/about/">About Cyrune <span>cyrune.app ↗</span></a>
+    <a href="${SITE}/ciphers/" data-site="ciphers/">Full cipher guides <span>${isNative()?"17 guides":"cyrune.app ↗"}</span></a>
+    <a href="${SITE}/about/" data-site="about/">About Cyrune <span>${isNative()?"how it works":"cyrune.app ↗"}</span></a>
   </div>
   <h3>Friend's challenge</h3>
   <p style="font-size:13px;color:var(--dim)">Got a code from a friend? Play their exact puzzle and see who scores higher.</p>
@@ -1656,7 +1661,7 @@ function guideHTML(){
       <span class="lbl">How to crack it</span><p>${g.crack}</p>
       <span class="lbl">Try it · ${g.tryLabel}</span><div class="try"><input id="try-${t}" data-try="${t}" maxlength="5" autocomplete="off" autocapitalize="characters" spellcheck="false" value="${g.tryWord||"HELLO"}" aria-label="Word to encrypt"><span class="arrow">→</span><output id="out-${t}">${g.run(g.tryWord||"HELLO")}</output></div>
       ${t==="morse"?`<div class="mchart">${chartHTML()}</div>`:t==="pigpen"?`<div class="mchart pigs">${pigChartHTML()}</div>`:""}
-      <div class="actions"><button class="btn alt" data-practice="${t}">Practise ${TYPES[t].short}</button>${WEB_SLUG[t]?`<a class="btn alt" href="${SITE}/ciphers/${WEB_SLUG[t]}/">Full guide ↗</a>`:""}</div></section>`;}).join("");
+      <div class="actions"><button class="btn alt" data-practice="${t}">Practise ${TYPES[t].short}</button>${WEB_SLUG[t]?`<a class="btn alt" href="${SITE}/ciphers/${WEB_SLUG[t]}/" data-site="ciphers/${WEB_SLUG[t]}/">Full guide ${isNative()?"→":"↗"}</a>`:""}</div></section>`;}).join("");
   const standalone=(window.matchMedia&&window.matchMedia("(display-mode: standalone)").matches)||navigator.standalone;
   const inst=isNative()?`<p>You're playing the Android app. Your streak and stats are saved on this phone.</p>`:standalone?`<p>You're playing the installed app. Nice.</p>`:
     `<div class="install-box"><p><b>Android (Chrome):</b> ${deferredPrompt?`tap <button class="btn" data-act="install" style="height:30px;font-size:10px">Install</button>, or`:""} open the browser menu ⋮ and choose <b>Install app</b> or <b>Add to Home screen</b>.</p><p><b>iPhone (Safari):</b> tap Share, then <b>Add to Home Screen</b>.</p>${APP_URL&&!APP_URL.startsWith("/*")?`<p>Install from the app's own address: <a href="${APP_URL}">${APP_URL.replace(/^https?:\/\//,"")}</a></p>`:""}</div>`;
@@ -1697,7 +1702,31 @@ function closeModal(){
 
 /* ---------- Android Back button: close what's open, step back to the daily, then leave ---------- */
 const AppAPI=()=>(window.capacitorApp&&window.capacitorApp.App)||null;
+let readerStack=[],readerSkip=false;
+function openReader(path){
+  const r=$("#reader"),f=$("#readerFrame");readerStack=[];readerSkip=false;
+  if(openModal)hideModal();
+  f.src="/site/"+path.replace(/\/$/,"/index.html");r.hidden=false;pauseTimer();
+}
+function closeReader(){const r=$("#reader");if(r.hidden)return;r.hidden=true;$("#readerFrame").src="about:blank";readerStack=[];resumeTimer();}
+function readerBack(){
+  if(readerStack.length>1){readerStack.pop();readerSkip=true;try{$("#readerFrame").contentWindow.history.back();}catch(e){closeReader();}}
+  else closeReader();
+}
+function readerLoaded(){
+  const f=$("#readerFrame");let w,d;try{w=f.contentWindow;d=f.contentDocument;}catch(e){return;}
+  if(!w||!d||$("#reader").hidden||!w.location.pathname.startsWith("/site/"))return;
+  if(readerSkip)readerSkip=false;else readerStack.push(w.location.href);
+  d.addEventListener("click",e=>{
+    const a=e.target.closest&&e.target.closest("a[href]");if(!a)return;
+    const u=new URL(a.getAttribute("href"),w.location.href);
+    if(u.origin!==location.origin){e.preventDefault();location.href=u.href;return;}   /* other websites and email: the phone's own apps */
+    if(!u.pathname.startsWith("/site/")){                                             /* Play, or a guide's "Play now": back to the game */
+      e.preventDefault();closeReader();const t=u.searchParams.get("practice");if(t&&TYPES[t])practiceType(t);}
+  });
+}
 function onBack(){
+  if(!$("#reader").hidden){readerBack();return;}
   if(coachStep>=0&&!$("#coach").hidden){endWalkthrough();return;}
   if(openModal){closeModal();return;}
   if(revealing)return;
@@ -1781,6 +1810,9 @@ function doInstall(){
 
 /* ---------- events ---------- */
 function bind(){
+  document.addEventListener("click",e=>{const a=e.target.closest&&e.target.closest("a[data-site]");
+    if(a&&isNative()){e.preventDefault();e.stopPropagation();openReader(a.dataset.site);}},true);
+  $("#readerFrame").addEventListener("load",readerLoaded);
   $("#kb").addEventListener("click",e=>{const b=e.target.closest("[data-key]");if(b)onKey(b.dataset.key);});
   $("#strip").addEventListener("click",e=>{
     const gd=e.target.closest("[data-guide]");if(gd){openGuide(gd.dataset.guide);return;}
