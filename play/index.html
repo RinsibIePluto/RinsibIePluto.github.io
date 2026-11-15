@@ -340,6 +340,7 @@ a.btn{display:inline-flex;align-items:center;text-decoration:none}
 .mnav button,.mnav a{display:flex;align-items:center;justify-content:space-between;gap:10px;width:100%;padding:12px 12px;border-radius:9px;background:#1a1512;border:1px solid var(--line);font-size:14px;font-weight:700;text-align:left;color:inherit;text-decoration:none}
 .mnav button span,.mnav a span{white-space:nowrap;font-family:var(--f-mono);font-size:10px;font-weight:600;color:var(--dim);letter-spacing:.06em}
 .mnav button.gold{border-color:var(--brass)}
+.ver{margin-top:16px;text-align:center;font-family:var(--f-mono);font-size:10px;letter-spacing:.08em;color:var(--dim)}
 .setting{display:flex;align-items:center;gap:12px;padding:11px 2px;border-bottom:1px solid #2e2620}
 .setting:last-child{border-bottom:0}
 .setting .st{flex:1;min-width:0}
@@ -1430,8 +1431,8 @@ function menuHTML(){
     <button data-menu="archive">Past puzzles <span>calendar</span></button>
     ${wk?`<button class="gold" data-menu="weekend">Weekend challenge <span>★★★★★</span></button>`:""}
     <button data-menu="walk">Show the walkthrough <span>${TYPES[P.type].short}</span></button>
-    <a href="${SITE}/ciphers/" data-site="ciphers/">Full cipher guides <span>${isNative()?"17 guides":"cyrune.app ↗"}</span></a>
-    <a href="${SITE}/about/" data-site="about/">About Cyrune <span>${isNative()?"how it works":"cyrune.app ↗"}</span></a>
+    <a href="${siteURL("ciphers/")}" data-site="ciphers/">Full cipher guides <span>${isNative()?"17 guides":"cyrune.app ↗"}</span></a>
+    <a href="${siteURL("about/")}" data-site="about/">About Cyrune <span>${isNative()?"how it works":"cyrune.app ↗"}</span></a>
   </div>
   <h3>Friend's challenge</h3>
   <p style="font-size:13px;color:var(--dim)">Got a code from a friend? Play their exact puzzle and see who scores higher.</p>
@@ -1445,9 +1446,11 @@ function menuHTML(){
   ${native?sw("remind","Daily reminder","A notification when the new puzzle is ready.")+(settings.remind?`<div class="setting"><div class="st"><b>Remind me at</b></div><input type="time" id="remindTime" value="${settings.remindTime}" aria-label="Reminder time"></div>`:"")
     :`<div class="setting"><div class="st"><b>Daily reminder</b><small>Available in the Android app.</small></div></div>`}
   ${native&&adPrivacy?`<div class="setting"><div class="st"><b>Ad privacy choices</b><small>Change what you agreed to for personalised ads.</small></div><button class="btn alt" data-menu="adprivacy">Open</button></div>`:""}
-  ${!native&&deferredPrompt?`<div class="actions"><button class="btn alt" data-act="install">Install the app</button></div>`:""}`;
+  ${!native&&deferredPrompt?`<div class="actions"><button class="btn alt" data-act="install">Install the app</button></div>`:""}
+  <p class="ver" id="appVer">${native?"Cyrune · Android app":"Cyrune · web version"}</p>`;
 }
-function openMenu(){$("#menuBody").innerHTML=menuHTML();showModal("menuModal");}
+function openMenu(){$("#menuBody").innerHTML=menuHTML();showModal("menuModal");
+  const a=AppAPI();if(isNative()&&a&&a.getInfo)a.getInfo().then(i=>{const v=$("#appVer");if(v&&i&&i.version)v.textContent=`Cyrune ${i.version} · Android app`;}).catch(()=>{});}
 function menuAction(k){
   if(k==="guide")openGuide();
   else if(k==="archive")openCalendar();
@@ -1651,6 +1654,8 @@ const GUIDE={
 };
 function pigRow(w){return `<span class="pgrow">${[...w].map(c=>`<span class="pg">${pigSVG(c)}</span>`).join("")}</span>`;}
 const SITE="https://cyrune.app";
+/* website links: in the Android app they point at the pages bundled in the app (never the browser) */
+const siteURL=p=>isNative()?"/site/"+p.replace(/\/$/,"/index.html"):SITE+"/"+p;
 const WEB_SLUG={shift:"shift-cipher",railfence:"rail-fence-cipher",pigpen:"pigpen-cipher",autokey:"autokey-cipher",morse:"morse-code",scramble:"shift-and-scramble",vig:"vigenere-cipher",beaufort:"beaufort-cipher",affine:"affine-cipher",keyword:"keyword-cipher",sub:"substitution-cipher",polybius:"polybius-square",adfgvx:"adfgvx-cipher",running:"running-key-cipher",playfair:"playfair-cipher",bifid:"bifid-cipher",enigma:"enigma-machine"};
 function guideHTML(){
   const todayType=dailyType(state.daily.n);
@@ -1661,7 +1666,7 @@ function guideHTML(){
       <span class="lbl">How to crack it</span><p>${g.crack}</p>
       <span class="lbl">Try it · ${g.tryLabel}</span><div class="try"><input id="try-${t}" data-try="${t}" maxlength="5" autocomplete="off" autocapitalize="characters" spellcheck="false" value="${g.tryWord||"HELLO"}" aria-label="Word to encrypt"><span class="arrow">→</span><output id="out-${t}">${g.run(g.tryWord||"HELLO")}</output></div>
       ${t==="morse"?`<div class="mchart">${chartHTML()}</div>`:t==="pigpen"?`<div class="mchart pigs">${pigChartHTML()}</div>`:""}
-      <div class="actions"><button class="btn alt" data-practice="${t}">Practise ${TYPES[t].short}</button>${WEB_SLUG[t]?`<a class="btn alt" href="${SITE}/ciphers/${WEB_SLUG[t]}/" data-site="ciphers/${WEB_SLUG[t]}/">Full guide ${isNative()?"→":"↗"}</a>`:""}</div></section>`;}).join("");
+      <div class="actions"><button class="btn alt" data-practice="${t}">Practise ${TYPES[t].short}</button>${WEB_SLUG[t]?`<a class="btn alt" href="${siteURL(`ciphers/${WEB_SLUG[t]}/`)}" data-site="ciphers/${WEB_SLUG[t]}/">Full guide ${isNative()?"→":"↗"}</a>`:""}</div></section>`;}).join("");
   const standalone=(window.matchMedia&&window.matchMedia("(display-mode: standalone)").matches)||navigator.standalone;
   const inst=isNative()?`<p>You're playing the Android app. Your streak and stats are saved on this phone.</p>`:standalone?`<p>You're playing the installed app. Nice.</p>`:
     `<div class="install-box"><p><b>Android (Chrome):</b> ${deferredPrompt?`tap <button class="btn" data-act="install" style="height:30px;font-size:10px">Install</button>, or`:""} open the browser menu ⋮ and choose <b>Install app</b> or <b>Add to Home screen</b>.</p><p><b>iPhone (Safari):</b> tap Share, then <b>Add to Home Screen</b>.</p>${APP_URL&&!APP_URL.startsWith("/*")?`<p>Install from the app's own address: <a href="${APP_URL}">${APP_URL.replace(/^https?:\/\//,"")}</a></p>`:""}</div>`;
@@ -1907,6 +1912,7 @@ function bind(){
     inp.value=w;$("#out-"+t).innerHTML=w?GUIDE[t].run(w):"";
   });
   {const app=AppAPI();if(app)app.addListener("backButton",onBack);}
+  if(isNative())document.querySelectorAll(".sitebar a[data-site]").forEach(a=>a.setAttribute("href",siteURL(a.dataset.site)));
   document.addEventListener("keydown",e=>{
     if(e.ctrlKey||e.metaKey||e.altKey)return;
     if(e.target&&(e.target.tagName==="INPUT"||e.target.tagName==="TEXTAREA")&&e.key!=="Escape")return;
