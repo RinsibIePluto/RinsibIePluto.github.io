@@ -4,51 +4,45 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>Cyrune: a daily cipher puzzle</title>
+<meta name="description" content="Crack one encrypted word a day, behind one of 17 classic ciphers from Caesar to Enigma. Free in your browser; Android app coming soon.">
 <link rel="canonical" href="https://cyrune.app/">
+<meta property="og:type" content="website">
 <meta property="og:title" content="Cyrune: a daily cipher puzzle">
-<meta property="og:description" content="Crack one encrypted word a day, behind one of 17 classic ciphers from Caesar to Enigma.">
-<meta property="og:image" content="https://cyrune.app/og.png">
+<meta property="og:description" content="Crack one encrypted word a day, behind one of 17 classic ciphers from Caesar to Enigma. Free in your browser; Android app coming soon.">
 <meta property="og:url" content="https://cyrune.app/">
+<meta property="og:image" content="https://cyrune.app/og.png">
 <meta name="twitter:card" content="summary_large_image">
-<meta name="description" content="Crack one encrypted word a day, behind one of 17 classic ciphers from Caesar to Enigma. Free for Android.">
-<link rel="icon" href="icon-192.png">
-<style>
-  :root{--bg:#15110f;--card:#1e1814;--ink:#efe5cf;--dim:#b3a68d;--brass:#c09b60;--lamp:#ffd27a;--line:#3a3027}
-  *{box-sizing:border-box}
-  html{background:#0d0a08}
-  body{margin:0;min-height:100vh;background:radial-gradient(120% 70% at 50% 0%,#33281e 0%,#1a1410 55%,#0d0a08 100%) no-repeat;color:var(--ink);font:17px/1.6 system-ui,-apple-system,"Segoe UI",Roboto,sans-serif}
-  main{max-width:640px;margin:0 auto;padding:64px 22px 48px;text-align:center}
-  img.icon{width:128px;height:128px;border-radius:28px;box-shadow:0 18px 50px rgba(0,0,0,.55)}
-  h1{margin:22px 0 4px;font-size:44px;letter-spacing:.14em;color:var(--brass)}
-  .tag{margin:0 0 26px;color:var(--dim);letter-spacing:.14em;text-transform:uppercase;font-size:14px}
-  .lamps{display:flex;justify-content:center;gap:10px;margin:0 0 28px}
-  .lamps span{width:46px;height:46px;border-radius:50%;display:grid;place-items:center;background:radial-gradient(circle at 50% 38%,#33291f 0%,#130f0c 72%);border:2px solid #5b4b38;font:700 20px ui-monospace,Menlo,monospace;color:var(--lamp);text-shadow:0 0 8px rgba(255,190,90,.9)}
-  p{margin:0 0 16px}
-  .btn{display:inline-block;margin:14px 0 4px;padding:13px 26px;border-radius:999px;background:var(--brass);color:#1b1511;font-weight:700;text-decoration:none;letter-spacing:.06em}
-  .small{color:var(--dim);font-size:14px}
-  ul{list-style:none;padding:0;margin:30px 0;display:grid;gap:10px;text-align:left}
-  li{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:12px 16px}
-  li b{color:var(--lamp)}
-  footer{margin-top:40px;color:var(--dim);font-size:14px}
-  footer a{color:var(--dim)}
-</style>
+<meta name="theme-color" content="#15110f">
+<link rel="icon" href="/icon-192.png">
+<link rel="stylesheet" href="/assets/site.css?v=2">
 </head>
 <body>
+<header class="top"><a class="brand" href="/"><img src="/icon-192.png" alt="" width="34" height="34"><span>CYRUNE</span></a>
+<nav><a href="/play/">Play</a><a href="/ciphers/">Ciphers</a><a href="/about/">About</a></nav></header>
 <main>
-  <img class="icon" src="icon-192.png" alt="Cyrune app icon">
-  <h1>CYRUNE</h1>
-  <p class="tag">A new cipher every day</p>
-  <div class="lamps" aria-hidden="true"><span>Q</span><span>T</span><span>I</span><span>Q</span><span>C</span></div>
-  <p>Every day Cyrune hides one five-letter word behind a classic cipher, picked at random from 17, from a Caesar shift to a working Enigma machine. Guess words, read the coloured tiles, find the key, crack it.</p>
-  <a class="btn" href="play/">Play in your browser</a>
-  <p class="small">Free · works on any phone or computer · Android app coming soon to Google Play</p>
-  <p class="small"><a href="ciphers/">How the 17 ciphers work →</a></p>
-  <ul>
-    <li><b>17 ciphers.</b> Morse, Vigenère, Playfair, Pigpen, ADFGVX, Enigma and more, each with a guide.</li>
-    <li><b>Weekend challenge.</b> One word through two ciphers every Saturday and Sunday.</li>
-    <li><b>Score and share.</b> Streaks, stats and challenge codes to race your friends.</li>
-  </ul>
-  <footer><a href="ciphers/">Cipher guides</a> · <a href="about/">About</a> · <a href="contact/">Contact</a> · <a href="cyrune/privacy.html">Privacy policy</a> · <a href="cyrune/terms.html">Terms of service</a><br>© 2026 RinsibIePluto</footer>
+
+<section class="hero">
+<img class="icon" src="/icon-192.png" width="112" height="112" alt="Cyrune app icon">
+<h1 class="wordmark">CYRUNE</h1>
+<p class="tag">A new cipher every day</p>
+<div class="lamps" aria-hidden="true"><span>Q</span><span>T</span><span>I</span><span>Q</span><span>C</span></div>
+<p>Every day Cyrune hides one five-letter word behind a classic cipher, picked at random from 17, from a Caesar shift to a working Enigma machine. Guess words, read the coloured tiles, find the key, crack it.</p>
+<a class="btn big" href="/play/">Play today's puzzle</a>
+<p class="small">Free · any phone or computer · Android app coming soon to Google Play</p>
+</section>
+<h2>Explore</h2>
+<ul class="explore">
+<li><a href="/ciphers/"><b>Cipher guides</b><span>How all 17 ciphers work, from Caesar to Enigma, and how codebreakers crack them.</span></a></li>
+<li><a href="/about/"><b>About Cyrune</b><span>How a puzzle works, where to play, and who makes it.</span></a></li>
+<li><a href="/contact/"><b>Contact</b><span>Bug reports, questions and ideas for new ciphers.</span></a></li>
+</ul>
+<h2>What's inside</h2>
+<ul class="feats">
+<li><b>17 ciphers.</b> Morse, Vigenère, Playfair, Pigpen, ADFGVX, Enigma and more, each with a guide.</li>
+<li><b>Weekend challenge.</b> One word through two ciphers every Saturday and Sunday.</li>
+<li><b>Score and share.</b> Streaks, stats and challenge codes to race your friends.</li>
+</ul>
 </main>
+<footer class="foot"><a href="/ciphers/">Cipher guides</a> · <a href="/about/">About</a> · <a href="/contact/">Contact</a> · <a href="/cyrune/privacy.html">Privacy</a> · <a href="/cyrune/terms.html">Terms</a><br>© 2026 RinsibIePluto</footer>
 </body>
 </html>

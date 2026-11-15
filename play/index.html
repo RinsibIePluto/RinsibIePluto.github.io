@@ -261,6 +261,7 @@ body.ad-on .modal{padding-bottom:calc(16px + var(--ad-h,60px) + var(--safe-area-
 .chip.playing{border:1px solid var(--line);color:var(--dim)}
 .actions{display:flex;gap:8px;margin-top:12px;flex-wrap:wrap}
 .btn{height:40px;padding:0 16px;border-radius:999px;background:var(--brass);color:#1a1410;font-size:12px;font-weight:700;letter-spacing:.1em;text-transform:uppercase}
+a.btn{display:inline-flex;align-items:center;text-decoration:none}
 .btn.alt{background:none;border:1px solid var(--brass);color:var(--brass)}
 .statgrid{display:grid;grid-template-columns:repeat(4,1fr);gap:6px}
 .stat{background:#1a1512;border:1px solid var(--line);border-radius:8px;padding:8px 4px;text-align:center}
@@ -313,8 +314,8 @@ body.ad-on .modal{padding-bottom:calc(16px + var(--ad-h,60px) + var(--safe-area-
 
 /* Menu and settings */
 .mnav{display:grid;gap:6px}
-.mnav button{display:flex;align-items:center;justify-content:space-between;gap:10px;width:100%;padding:12px 12px;border-radius:9px;background:#1a1512;border:1px solid var(--line);font-size:14px;font-weight:700;text-align:left}
-.mnav button span{font-family:var(--f-mono);font-size:10px;font-weight:600;color:var(--dim);letter-spacing:.06em}
+.mnav button,.mnav a{display:flex;align-items:center;justify-content:space-between;gap:10px;width:100%;padding:12px 12px;border-radius:9px;background:#1a1512;border:1px solid var(--line);font-size:14px;font-weight:700;text-align:left;color:inherit;text-decoration:none}
+.mnav button span,.mnav a span{white-space:nowrap;font-family:var(--f-mono);font-size:10px;font-weight:600;color:var(--dim);letter-spacing:.06em}
 .mnav button.gold{border-color:var(--brass)}
 .setting{display:flex;align-items:center;gap:12px;padding:11px 2px;border-bottom:1px solid #2e2620}
 .setting:last-child{border-bottom:0}
@@ -1391,6 +1392,8 @@ function menuHTML(){
     <button data-menu="archive">Past puzzles <span>calendar</span></button>
     ${wk?`<button class="gold" data-menu="weekend">Weekend challenge <span>★★★★★</span></button>`:""}
     <button data-menu="walk">Show the walkthrough <span>${TYPES[P.type].short}</span></button>
+    <a href="${SITE}/ciphers/">Full cipher guides <span>cyrune.app ↗</span></a>
+    <a href="${SITE}/about/">About Cyrune <span>cyrune.app ↗</span></a>
   </div>
   <h3>Friend's challenge</h3>
   <p style="font-size:13px;color:var(--dim)">Got a code from a friend? Play their exact puzzle and see who scores higher.</p>
@@ -1609,6 +1612,8 @@ const GUIDE={
     tryLabel:"Vigenère KO + order 2-5-1-4-3",run:w=>w.length===5?ENC.scramble(ENC.vig(w,[10,14]),[1,4,0,3,2]):"type 5 letters"}
 };
 function pigRow(w){return `<span class="pgrow">${[...w].map(c=>`<span class="pg">${pigSVG(c)}</span>`).join("")}</span>`;}
+const SITE="https://cyrune.app";
+const WEB_SLUG={shift:"shift-cipher",railfence:"rail-fence-cipher",pigpen:"pigpen-cipher",autokey:"autokey-cipher",morse:"morse-code",scramble:"shift-and-scramble",vig:"vigenere-cipher",beaufort:"beaufort-cipher",affine:"affine-cipher",keyword:"keyword-cipher",sub:"substitution-cipher",polybius:"polybius-square",adfgvx:"adfgvx-cipher",running:"running-key-cipher",playfair:"playfair-cipher",bifid:"bifid-cipher",enigma:"enigma-machine"};
 function guideHTML(){
   const todayType=dailyType(state.daily.n);
   const weekRows=GUIDE_ORDER.map((t,i)=>`<li class="${t===todayType?"today":""}"><span class="d">${i+1}</span><span><a href="#g-${t}" data-jump="${t}">${TYPES[t].short}</a>${t===todayType?`<span class="tag">Today</span>`:""}</span>${starHTML(TYPES[t].stars)}</li>`).join("");
@@ -1618,7 +1623,7 @@ function guideHTML(){
       <span class="lbl">How to crack it</span><p>${g.crack}</p>
       <span class="lbl">Try it · ${g.tryLabel}</span><div class="try"><input id="try-${t}" data-try="${t}" maxlength="5" autocomplete="off" autocapitalize="characters" spellcheck="false" value="${g.tryWord||"HELLO"}" aria-label="Word to encrypt"><span class="arrow">→</span><output id="out-${t}">${g.run(g.tryWord||"HELLO")}</output></div>
       ${t==="morse"?`<div class="mchart">${chartHTML()}</div>`:t==="pigpen"?`<div class="mchart pigs">${pigChartHTML()}</div>`:""}
-      <div class="actions"><button class="btn alt" data-practice="${t}">Practise ${TYPES[t].short}</button></div></section>`;}).join("");
+      <div class="actions"><button class="btn alt" data-practice="${t}">Practise ${TYPES[t].short}</button>${WEB_SLUG[t]?`<a class="btn alt" href="${SITE}/ciphers/${WEB_SLUG[t]}/">Full guide ↗</a>`:""}</div></section>`;}).join("");
   const standalone=(window.matchMedia&&window.matchMedia("(display-mode: standalone)").matches)||navigator.standalone;
   const inst=isNative()?`<p>You're playing the Android app. Your streak and stats are saved on this phone.</p>`:standalone?`<p>You're playing the installed app. Nice.</p>`:
     `<div class="install-box"><p><b>Android (Chrome):</b> ${deferredPrompt?`tap <button class="btn" data-act="install" style="height:30px;font-size:10px">Install</button>, or`:""} open the browser menu ⋮ and choose <b>Install app</b> or <b>Add to Home screen</b>.</p><p><b>iPhone (Safari):</b> tap Share, then <b>Add to Home Screen</b>.</p>${APP_URL&&!APP_URL.startsWith("/*")?`<p>Install from the app's own address: <a href="${APP_URL}">${APP_URL.replace(/^https?:\/\//,"")}</a></p>`:""}</div>`;
