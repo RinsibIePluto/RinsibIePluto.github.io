@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Rail fence cipher: how the zigzag transposition works and how to crack it · Cyrune</title>
+<meta name="description" content="How the rail fence cipher writes a message in a zigzag across rails, a worked example, and how to break it by trying every rail count.">
+<link rel="canonical" href="https://cyrune.app/ciphers/rail-fence-cipher/">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Rail fence cipher: how the zigzag transposition works and how to crack it · Cyrune">
+<meta property="og:description" content="How the rail fence cipher writes a message in a zigzag across rails, a worked example, and how to break it by trying every rail count.">
+<meta property="og:url" content="https://cyrune.app/ciphers/rail-fence-cipher/">
+<meta property="og:image" content="https://cyrune.app/og.png">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="theme-color" content="#15110f">
+<link rel="icon" href="/icon-192.png">
+<link rel="stylesheet" href="/assets/site.css?v=1">
+</head>
+<body>
+<header class="top"><a class="brand" href="/"><img src="/icon-192.png" alt="" width="34" height="34"><span>CYRUNE</span></a>
+<nav><a href="/play/">Play</a><a href="/ciphers/">Ciphers</a><a href="/about/">About</a></nav></header>
+<main><nav class="crumbs" aria-label="Breadcrumb"><a href="/">Home</a> › <a href="/ciphers/">Ciphers</a> › Rail fence</nav>
+<h1>Rail fence</h1>
+<p class="lead">The rail fence cipher doesn't change any letters at all. It writes the message in a zigzag across two or more rows, the rails, and then reads each row in turn, so the right letters come out in the wrong order.</p><p class="meta">Difficulty in Cyrune: <span class="stars">★★☆☆☆</span></p>
+<h2>A little history</h2>
+<p>The rail fence is one of the classic <em>transposition</em> ciphers, where the letters are rearranged rather than replaced. The name comes from the shape of the writing: the zigzag looks like the rails of a split-rail fence. It is easy to do by hand with no equipment, which made it a popular first cipher for schoolchildren and puzzle books, and a common building block in more serious systems that combined transposition with substitution.</p>
+<h2>How it works</h2>
+<ol><li>Pick the number of rails, for example three.</li><li>Write the message diagonally down and up across the rails in a zigzag.</li><li>Read the top rail from left to right, then the next rail, and so on.</li></ol>
+<p>Here is the textbook example, "We are discovered, flee at once", written on three rails:</p>
+<pre class="rails">W···E···C···R···L···T···E
+·E·R·D·S·O·E·E·F·E·A·O·C·
+··A···I···V···D···E···N··</pre>
+<p>Reading the rails in turn gives <code>WECRLTEERDSOEEFEAOCAIVDEN</code>.</p>
+<figure class="ex"><figcaption>Worked example: 3 rails</figcaption><div class="exrow"><span>Message</span><b><code>SPIES</code></b></div><div class="exrow"><span>Top rail</span><b>S, S</b></div><div class="exrow"><span>Middle rail</span><b>P, E</b></div><div class="exrow"><span>Bottom rail</span><b>I</b></div><div class="exrow"><span>Cipher</span><b><code>SSPEI</code></b></div></figure>
+<p>To decrypt, you rebuild the zigzag: you know how many letters land on each rail, so you can cut the ciphertext into pieces and lay them back along the right rows.</p>
+<h2>How to crack it</h2>
+<p>A transposition cipher leaves every letter untouched, so letter frequencies look exactly like normal English. That gives it away straight away: if a ciphertext has plenty of E's, T's and A's in normal proportions, the letters have only been shuffled. From there, the rail fence has very few keys. Try two rails, then three, then four, and the right one jumps out as readable text.</p>
+<h2>Rail fence in Cyrune</h2>
+<p>Cyrune's rail fence uses two, three or four rails, and the zigzag can start part-way down, so the key is a rail count plus a starting step. That's only about a dozen possible zigzags. The lamps are an anagram of the answer: turn the two rotors until the windows read as a word, and use green tiles to confirm which letters belong where.</p>
+<aside class="cta"><div><b>Crack a Rail fence puzzle</b><span>★★☆☆☆ in Cyrune</span></div><a class="btn" href="/play/?practice=railfence">Play now</a></aside><h2>Related ciphers</h2><ul class="rel"><li><a href="/ciphers/shift-and-scramble/">Shift + scramble</a> <span>★★★☆☆</span></li><li><a href="/ciphers/adfgvx-cipher/">ADFGVX cipher</a> <span>★★★★☆</span></li><li><a href="/ciphers/shift-cipher/">Shift cipher</a> <span>★☆☆☆☆</span></li></ul><nav class="pn"><a href="/ciphers/shift-cipher/">← Shift cipher</a><a href="/ciphers/pigpen-cipher/">Pigpen cipher →</a></nav>
+</main>
+<footer class="foot"><a href="/ciphers/">Cipher guides</a> · <a href="/about/">About</a> · <a href="/contact/">Contact</a> · <a href="/cyrune/privacy.html">Privacy</a> · <a href="/cyrune/terms.html">Terms</a><br>© 2026 RinsibIePluto</footer>
+</body>
+</html>

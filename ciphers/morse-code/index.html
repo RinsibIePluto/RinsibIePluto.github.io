@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Morse code and run-on Morse: how it works and how to decode it · Cyrune</title>
+<meta name="description" content="How Morse code turns letters into dots and dashes, why run-on Morse without gaps is a real puzzle, and tips for splitting the signal.">
+<link rel="canonical" href="https://cyrune.app/ciphers/morse-code/">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Morse code and run-on Morse: how it works and how to decode it · Cyrune">
+<meta property="og:description" content="How Morse code turns letters into dots and dashes, why run-on Morse without gaps is a real puzzle, and tips for splitting the signal.">
+<meta property="og:url" content="https://cyrune.app/ciphers/morse-code/">
+<meta property="og:image" content="https://cyrune.app/og.png">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="theme-color" content="#15110f">
+<link rel="icon" href="/icon-192.png">
+<link rel="stylesheet" href="/assets/site.css?v=1">
+</head>
+<body>
+<header class="top"><a class="brand" href="/"><img src="/icon-192.png" alt="" width="34" height="34"><span>CYRUNE</span></a>
+<nav><a href="/play/">Play</a><a href="/ciphers/">Ciphers</a><a href="/about/">About</a></nav></header>
+<main><nav class="crumbs" aria-label="Breadcrumb"><a href="/">Home</a> › <a href="/ciphers/">Ciphers</a> › Run-on Morse</nav>
+<h1>Run-on Morse</h1>
+<p class="lead">Morse code turns each letter into a pattern of short and long signals, dots and dashes. Normally a pause marks where each letter ends. Take the pauses away and you get run-on Morse, which can be read in many different ways.</p><p class="meta">Difficulty in Cyrune: <span class="stars">★★★☆☆</span></p>
+<h2>A little history</h2>
+<p>Samuel Morse and his partner Alfred Vail developed the code for the electric telegraph in the 1830s and 1840s. The first public message on the line between Washington and Baltimore, in 1844, was "What hath God wrought". Vail is said to have counted the letters in a printer's box of type to find the most common ones, which is why E is a single dot and T a single dash. The international version that's still used by radio amateurs today was standardised later in the 1800s.</p>
+<p>Strictly speaking, Morse is a <em>code</em>, not a cipher: it isn't secret, it's just a different way of writing letters. The puzzle comes from losing the gaps.</p>
+<h2>How it works</h2>
+<p>Each letter has its own pattern, from one signal (E is <b>·</b>) to four (Q is <b>––·–</b>). When people send Morse, they leave a short pause between letters and a longer one between words.</p>
+<figure class="ex"><figcaption>Worked example</figcaption><div class="exrow"><span>Message</span><b><code>SPIES</code></b></div><div class="exrow"><span>With gaps</span><b><code>··· / ·––· / ·· / · / ···</code></b></div><div class="exrow"><span>Run-on</span><b><code>····––·······</code></b></div></figure>
+<h2>Why run-on Morse is hard</h2>
+<p>Without the gaps, one stream of dots and dashes can be split into letters in many ways. Six dots in a row, <b>······</b>, could be HI, IH, SS, III or six E's, and every one of those is valid Morse. The only way to decide is to find the split that makes a real word.</p>
+<h2>How to crack it</h2>
+<p>Work from the ends inward: try the first one to four signals as a letter, and see whether the rest of the stream can still be split into a sensible word. Long runs of the same signal are useful landmarks, because a dash dash dash (O) or a run of dots (S, H) has fewer ways to break. And if you know the word length, as you do in Cyrune, that rules out most splits.</p>
+<h2>Morse in Cyrune</h2>
+<p>Cyrune sends the whole word as one run-on stream, so you must choose where each letter ends. Tap a window to try a letter and the game shows how much of the signal still fits; the Chart button shows every letter's pattern. Green tiles lock a letter in and cut the possibilities down fast.</p>
+<aside class="cta"><div><b>Crack a Morse puzzle</b><span>★★★☆☆ in Cyrune</span></div><a class="btn" href="/play/?practice=morse">Play now</a></aside><h2>Related ciphers</h2><ul class="rel"><li><a href="/ciphers/polybius-square/">Polybius square</a> <span>★★★★☆</span></li><li><a href="/ciphers/adfgvx-cipher/">ADFGVX cipher</a> <span>★★★★☆</span></li><li><a href="/ciphers/shift-cipher/">Shift cipher</a> <span>★☆☆☆☆</span></li></ul><nav class="pn"><a href="/ciphers/autokey-cipher/">← Autokey cipher</a><a href="/ciphers/shift-and-scramble/">Shift + scramble →</a></nav>
+</main>
+<footer class="foot"><a href="/ciphers/">Cipher guides</a> · <a href="/about/">About</a> · <a href="/contact/">Contact</a> · <a href="/cyrune/privacy.html">Privacy</a> · <a href="/cyrune/terms.html">Terms</a><br>© 2026 RinsibIePluto</footer>
+</body>
+</html>

@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Substitution cipher: 26! keys, broken by counting letters · Cyrune</title>
+<meta name="description" content="The simple substitution cipher explained: a scrambled alphabet with 4×10²⁶ keys, how frequency analysis breaks it, and its role in history.">
+<link rel="canonical" href="https://cyrune.app/ciphers/substitution-cipher/">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Substitution cipher: 26! keys, broken by counting letters · Cyrune">
+<meta property="og:description" content="The simple substitution cipher explained: a scrambled alphabet with 4×10²⁶ keys, how frequency analysis breaks it, and its role in history.">
+<meta property="og:url" content="https://cyrune.app/ciphers/substitution-cipher/">
+<meta property="og:image" content="https://cyrune.app/og.png">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="theme-color" content="#15110f">
+<link rel="icon" href="/icon-192.png">
+<link rel="stylesheet" href="/assets/site.css?v=1">
+</head>
+<body>
+<header class="top"><a class="brand" href="/"><img src="/icon-192.png" alt="" width="34" height="34"><span>CYRUNE</span></a>
+<nav><a href="/play/">Play</a><a href="/ciphers/">Ciphers</a><a href="/about/">About</a></nav></header>
+<main><nav class="crumbs" aria-label="Breadcrumb"><a href="/">Home</a> › <a href="/ciphers/">Ciphers</a> › Substitution cipher</nav>
+<h1>Substitution cipher</h1>
+<p class="lead">A substitution cipher swaps every letter for another using a scrambled alphabet. There are about 400 million million million million possible alphabets, far too many to try. Yet a ninth-century scholar showed how to break it with nothing more than counting.</p><p class="meta">Difficulty in Cyrune: <span class="stars">★★★★☆</span></p>
+<h2>A little history</h2>
+<p>Substitution ciphers were the standard way to keep secrets for well over a thousand years. Around the 800s, the Arab scholar al-Kindi wrote the first known description of frequency analysis: in any language, some letters are far more common than others, and the same is true of their substitutes. In 1586, Mary, Queen of Scots trusted a substitution cipher to plot against Elizabeth I. Elizabeth's codebreaker Thomas Phelippes broke it by counting letters, and the decrypted letters led to Mary's execution.</p>
+<h2>How it works</h2>
+<p>Write out any rearrangement of the alphabet. That's the key. Each message letter is swapped for the letter in the same position of the key alphabet.</p>
+<figure class="ex"><figcaption>Worked example: a keyboard alphabet</figcaption><div class="exrow"><span>Normal</span><b><code>ABCDEFGHIJKLMNOPQRSTUVWXYZ</code></b></div><div class="exrow"><span>Key</span><b><code>QWERTYUIOPASDFGHJKLZXCVBNM</code></b></div><div class="exrow"><span>Message</span><b><code>SPIES</code></b></div><div class="exrow"><span>Cipher</span><b><code>LHOTL</code></b></div></figure>
+<p>The number of possible keys is 26 × 25 × 24 × … × 1, written 26! (26 factorial): about 4 × 10²⁶. Even checking a billion keys a second would take billions of years.</p>
+<h2>How to crack it</h2>
+<p>Don't search keys; read patterns. In English, E, T, A and O are the most common letters, TH and HE the most common pairs, and THE the most common word. Count the cipher letters, match the most common ones, and look for words with telltale shapes: a three-letter word that appears often is probably THE, and a word like XYZZYX with repeated letters in those places can only be a few words. Each letter you fix makes the next guess easier.</p>
+<h2>Substitution in Cyrune</h2>
+<p>With only five letters, there isn't enough text to count, so your coloured guesses do the work. Repeated lamps still mean repeated letters, which narrows down the word's shape. Tap a window and type a letter to build the key one letter at a time.</p>
+<aside class="cta"><div><b>Crack a Substitution puzzle</b><span>★★★★☆ in Cyrune</span></div><a class="btn" href="/play/?practice=sub">Play now</a></aside><h2>Related ciphers</h2><ul class="rel"><li><a href="/ciphers/keyword-cipher/">Keyword cipher</a> <span>★★★★☆</span></li><li><a href="/ciphers/pigpen-cipher/">Pigpen cipher</a> <span>★★☆☆☆</span></li><li><a href="/ciphers/affine-cipher/">Affine cipher</a> <span>★★★★☆</span></li></ul><nav class="pn"><a href="/ciphers/keyword-cipher/">← Keyword cipher</a><a href="/ciphers/polybius-square/">Polybius square →</a></nav>
+</main>
+<footer class="foot"><a href="/ciphers/">Cipher guides</a> · <a href="/about/">About</a> · <a href="/contact/">Contact</a> · <a href="/cyrune/privacy.html">Privacy</a> · <a href="/cyrune/terms.html">Terms</a><br>© 2026 RinsibIePluto</footer>
+</body>
+</html>

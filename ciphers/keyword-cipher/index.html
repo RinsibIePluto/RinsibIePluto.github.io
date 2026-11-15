@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Keyword cipher: a substitution alphabet built from a word · Cyrune</title>
+<meta name="description" content="How a keyword cipher builds a scrambled alphabet from a keyword, a worked example, and how to spot and crack it.">
+<link rel="canonical" href="https://cyrune.app/ciphers/keyword-cipher/">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Keyword cipher: a substitution alphabet built from a word · Cyrune">
+<meta property="og:description" content="How a keyword cipher builds a scrambled alphabet from a keyword, a worked example, and how to spot and crack it.">
+<meta property="og:url" content="https://cyrune.app/ciphers/keyword-cipher/">
+<meta property="og:image" content="https://cyrune.app/og.png">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="theme-color" content="#15110f">
+<link rel="icon" href="/icon-192.png">
+<link rel="stylesheet" href="/assets/site.css?v=1">
+</head>
+<body>
+<header class="top"><a class="brand" href="/"><img src="/icon-192.png" alt="" width="34" height="34"><span>CYRUNE</span></a>
+<nav><a href="/play/">Play</a><a href="/ciphers/">Ciphers</a><a href="/about/">About</a></nav></header>
+<main><nav class="crumbs" aria-label="Breadcrumb"><a href="/">Home</a> › <a href="/ciphers/">Ciphers</a> › Keyword cipher</nav>
+<h1>Keyword cipher</h1>
+<p class="lead">A keyword cipher is a substitution cipher with an easy-to-remember key. Instead of memorising a whole scrambled alphabet, you remember one word, and the alphabet is built from it.</p><p class="meta">Difficulty in Cyrune: <span class="stars">★★★★☆</span></p>
+<h2>A little history</h2>
+<p>Keyed alphabets were popular for centuries because they solve a real problem: a fully random substitution alphabet is hard to remember and dangerous to write down. A keyword lets two people rebuild the same alphabet from memory. The trade-off is that the alphabet is less random, which helps codebreakers.</p>
+<h2>How it works</h2>
+<ol><li>Write the keyword's letters, dropping any repeats.</li><li>Continue with the rest of the alphabet in order, skipping letters you've already used.</li><li>Line this alphabet up under the normal one and swap each message letter for the letter beneath it.</li></ol>
+<figure class="ex"><figcaption>Worked example: keyword ZEBRAS</figcaption><div class="exrow"><span>Normal</span><b><code>ABCDEFGHIJKLMNOPQRSTUVWXYZ</code></b></div><div class="exrow"><span>Keyed</span><b><code>ZEBRASCDFGHIJKLMNOPQTUVWXY</code></b></div><div class="exrow"><span>Message</span><b><code>SPIES</code></b></div><div class="exrow"><span>Cipher</span><b><code>PMFAP</code></b></div><p>S is the 19th letter, so it becomes the 19th letter of the keyed alphabet, P. The end of the alphabet, T to Y, barely moves.</p></figure>
+<h2>How to crack it</h2>
+<p>A keyword cipher can be attacked like any substitution cipher, by counting letters and spotting common words. But it has an extra weakness: after the keyword, the alphabet runs in order. Letters near the end of the alphabet often encrypt to themselves or to a neighbour, and once you've found a few letters you can often guess the keyword and fill in everything else.</p>
+<h2>Keyword ciphers in Cyrune</h2>
+<p>In Cyrune the keyword is itself a five-letter word, so there are two words to find. Repeated lamps mean repeated letters. Tap the keyword box, type a guess and watch the windows: if your keyword is right, the decoded word appears.</p>
+<aside class="cta"><div><b>Crack a Keyword puzzle</b><span>★★★★☆ in Cyrune</span></div><a class="btn" href="/play/?practice=keyword">Play now</a></aside><h2>Related ciphers</h2><ul class="rel"><li><a href="/ciphers/substitution-cipher/">Substitution cipher</a> <span>★★★★☆</span></li><li><a href="/ciphers/affine-cipher/">Affine cipher</a> <span>★★★★☆</span></li><li><a href="/ciphers/pigpen-cipher/">Pigpen cipher</a> <span>★★☆☆☆</span></li></ul><nav class="pn"><a href="/ciphers/affine-cipher/">← Affine cipher</a><a href="/ciphers/substitution-cipher/">Substitution cipher →</a></nav>
+</main>
+<footer class="foot"><a href="/ciphers/">Cipher guides</a> · <a href="/about/">About</a> · <a href="/contact/">Contact</a> · <a href="/cyrune/privacy.html">Privacy</a> · <a href="/cyrune/terms.html">Terms</a><br>© 2026 RinsibIePluto</footer>
+</body>
+</html>

@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Bifid cipher: Delastelle&#x27;s split-and-recombine cipher · Cyrune</title>
+<meta name="description" content="How the Bifid cipher splits letters into row and column numbers, mixes them, and recombines them, with a worked example and cracking tips.">
+<link rel="canonical" href="https://cyrune.app/ciphers/bifid-cipher/">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Bifid cipher: Delastelle&#x27;s split-and-recombine cipher · Cyrune">
+<meta property="og:description" content="How the Bifid cipher splits letters into row and column numbers, mixes them, and recombines them, with a worked example and cracking tips.">
+<meta property="og:url" content="https://cyrune.app/ciphers/bifid-cipher/">
+<meta property="og:image" content="https://cyrune.app/og.png">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="theme-color" content="#15110f">
+<link rel="icon" href="/icon-192.png">
+<link rel="stylesheet" href="/assets/site.css?v=1">
+</head>
+<body>
+<header class="top"><a class="brand" href="/"><img src="/icon-192.png" alt="" width="34" height="34"><span>CYRUNE</span></a>
+<nav><a href="/play/">Play</a><a href="/ciphers/">Ciphers</a><a href="/about/">About</a></nav></header>
+<main><nav class="crumbs" aria-label="Breadcrumb"><a href="/">Home</a> › <a href="/ciphers/">Ciphers</a> › Bifid cipher</nav>
+<h1>Bifid cipher</h1>
+<p class="lead">The Bifid cipher splits every letter into two coordinates from a keyword square, mixes the coordinates of neighbouring letters together, and turns them back into letters. Every cipher letter depends on two message letters.</p><p class="meta">Difficulty in Cyrune: <span class="stars">★★★★★</span></p>
+<h2>A little history</h2>
+<p>The French amateur cryptographer Félix Delastelle described the Bifid cipher around 1901, in a book on cryptography published shortly after his death. He never held an official post, but his ciphers combined substitution and transposition in such a neat way that they're still a favourite of puzzle setters and cipher enthusiasts.</p>
+<h2>How it works</h2>
+<ol><li>Build a 5 × 5 keyword square, as in Playfair.</li><li>Write each message letter's row number on one line and its column number on a second line.</li><li>Read the numbers across the first line and then the second, and take them two at a time as new row-column pairs.</li><li>Look each pair up in the square to get the cipher letters.</li></ol>
+<table class="sq"><tr><th></th><th>1</th><th>2</th><th>3</th><th>4</th><th>5</th></tr><tr><th>1</th><td>C</td><td>R</td><td>A</td><td>N</td><td class=hl>E</td></tr><tr><th>2</th><td>B</td><td>D</td><td>F</td><td>G</td><td>H</td></tr><tr><th>3</th><td class=hl>I/J</td><td>K</td><td>L</td><td>M</td><td>O</td></tr><tr><th>4</th><td class=hl>P</td><td>Q</td><td class=hl>S</td><td>T</td><td>U</td></tr><tr><th>5</th><td>V</td><td>W</td><td>X</td><td>Y</td><td>Z</td></tr></table>
+<figure class="ex"><figcaption>Worked example: keyword CRANE</figcaption><div class="exrow"><span>Message</span><b><code>SPIES</code></b></div><div class="exrow"><span>Cipher</span><b><code>TISCX</code></b></div><p>Each cipher letter is built from the halves of two different message letters, so changing one message letter changes two cipher letters.</p></figure>
+<h2>How to crack it</h2>
+<p>Bifid is much harder to break by hand than Playfair, because no cipher letter maps neatly to any message letter. Codebreakers work on the square itself: guess part of the message, work out which coordinates it would produce, and test whether a square can satisfy them all. Short messages give very little to work with.</p>
+<h2>Bifid in Cyrune</h2>
+<p>A single wrong letter in the keyword scrambles two letters of the message, so partial decodes are rare. Pin what you know from your guesses, then press Test keywords and read through the squares that fit.</p>
+<aside class="cta"><div><b>Crack a Bifid puzzle</b><span>★★★★★ in Cyrune</span></div><a class="btn" href="/play/?practice=bifid">Play now</a></aside><h2>Related ciphers</h2><ul class="rel"><li><a href="/ciphers/playfair-cipher/">Playfair cipher</a> <span>★★★★★</span></li><li><a href="/ciphers/polybius-square/">Polybius square</a> <span>★★★★☆</span></li><li><a href="/ciphers/adfgvx-cipher/">ADFGVX cipher</a> <span>★★★★☆</span></li></ul><nav class="pn"><a href="/ciphers/playfair-cipher/">← Playfair cipher</a><a href="/ciphers/enigma-machine/">Enigma machine →</a></nav>
+</main>
+<footer class="foot"><a href="/ciphers/">Cipher guides</a> · <a href="/about/">About</a> · <a href="/contact/">Contact</a> · <a href="/cyrune/privacy.html">Privacy</a> · <a href="/cyrune/terms.html">Terms</a><br>© 2026 RinsibIePluto</footer>
+</body>
+</html>

@@ -14,3 +14,9 @@ serve the site on cyrune.app (DNS at Cloudflare: four A records to GitHub Pages,
 | app-ads.txt | https://cyrune.app/app-ads.txt | AdMob seller verification |
 
 Support email in the privacy policy: jasonleroux10000000000@gmail.com.
+
+## Content pages
+
+`/ciphers/`, `/about/`, `/contact/`, `sitemap.xml` and `robots.txt` are generated: run
+`python3 build-web.py && python3 site-src/compute-examples.py && python3 site-src/build-ciphers.py`.
+The worked examples are computed with the game's own cipher code, so they always match the game.

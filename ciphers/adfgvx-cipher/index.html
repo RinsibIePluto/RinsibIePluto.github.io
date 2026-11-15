@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>ADFGVX cipher: the German army&#x27;s code of 1918 · Cyrune</title>
+<meta name="description" content="The ADFGVX cipher explained: a 6×6 square turned into Morse-friendly letters, a columnar transposition, and how Georges Painvin broke it.">
+<link rel="canonical" href="https://cyrune.app/ciphers/adfgvx-cipher/">
+<meta property="og:type" content="article">
+<meta property="og:title" content="ADFGVX cipher: the German army&#x27;s code of 1918 · Cyrune">
+<meta property="og:description" content="The ADFGVX cipher explained: a 6×6 square turned into Morse-friendly letters, a columnar transposition, and how Georges Painvin broke it.">
+<meta property="og:url" content="https://cyrune.app/ciphers/adfgvx-cipher/">
+<meta property="og:image" content="https://cyrune.app/og.png">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="theme-color" content="#15110f">
+<link rel="icon" href="/icon-192.png">
+<link rel="stylesheet" href="/assets/site.css?v=1">
+</head>
+<body>
+<header class="top"><a class="brand" href="/"><img src="/icon-192.png" alt="" width="34" height="34"><span>CYRUNE</span></a>
+<nav><a href="/play/">Play</a><a href="/ciphers/">Ciphers</a><a href="/about/">About</a></nav></header>
+<main><nav class="crumbs" aria-label="Breadcrumb"><a href="/">Home</a> › <a href="/ciphers/">Ciphers</a> › ADFGVX cipher</nav>
+<h1>ADFGVX cipher</h1>
+<p class="lead">ADFGVX turns each letter into a pair of the letters A, D, F, G, V and X, then shuffles the result by columns. It was the German army's field cipher in the last months of the First World War.</p><p class="meta">Difficulty in Cyrune: <span class="stars">★★★★☆</span></p>
+<h2>A little history</h2>
+<p>Colonel Fritz Nebel designed the cipher, and the German army brought it into use in the spring of 1918, ahead of its great offensive on the Western Front. The letters A, D, F, G, V and X were chosen because they sound very different in Morse code, so radio operators were less likely to mix them up. The French cryptanalyst Georges Painvin broke a key in June 1918 after days of exhausting work, and the message he decrypted helped the French anticipate an attack.</p>
+<h2>How it works</h2>
+<ol><li><b>Substitute.</b> Find each letter in a 6 × 6 square whose rows and columns are labelled A D F G V X, and write down its row and column letters.</li><li><b>Transpose.</b> Write the result in rows under the columns of a key, then send the columns in a secret order.</li></ol>
+<figure class="ex"><figcaption>Worked example</figcaption><div class="exrow"><span>Message</span><b><code>SPIES</code></b></div><div class="exrow"><span>Pairs from the square</span><b><code>GA FG DF AV GA</code></b></div><div class="exrow"><span>Written in 5 columns, read down</span><b><code>GF AA FV GG DA</code></b></div><div class="exrow"><span>Columns sent as 2, 5, 1, 4, 3</span><b><code>AA DA GF GG FV</code></b></div></figure>
+<p>Splitting each letter in two and then shuffling the halves is what made ADFGVX strong: the two halves of a letter end up far apart.</p>
+<h2>How to crack it</h2>
+<p>Painvin's attack relied on several messages sent with the same key. Messages that started or ended alike revealed how the columns had been arranged; once the columns were back in order, the pairs could be treated as a substitution cipher and solved by counting. Without lots of messages, ADFGVX is very hard to break by hand.</p>
+<h2>ADFGVX in Cyrune</h2>
+<p>Cyrune keeps the 6 × 6 square public, so only the column order is secret. Tap the columns in the order you think they were written. Each pair of signals is one letter, and the third letter straddles both rows, so a wrong order quickly shows up as digits or nonsense.</p>
+<aside class="cta"><div><b>Crack a ADFGVX puzzle</b><span>★★★★☆ in Cyrune</span></div><a class="btn" href="/play/?practice=adfgvx">Play now</a></aside><h2>Related ciphers</h2><ul class="rel"><li><a href="/ciphers/polybius-square/">Polybius square</a> <span>★★★★☆</span></li><li><a href="/ciphers/rail-fence-cipher/">Rail fence</a> <span>★★☆☆☆</span></li><li><a href="/ciphers/morse-code/">Run-on Morse</a> <span>★★★☆☆</span></li></ul><nav class="pn"><a href="/ciphers/polybius-square/">← Polybius square</a><a href="/ciphers/running-key-cipher/">Running key →</a></nav>
+</main>
+<footer class="foot"><a href="/ciphers/">Cipher guides</a> · <a href="/about/">About</a> · <a href="/contact/">Contact</a> · <a href="/cyrune/privacy.html">Privacy</a> · <a href="/cyrune/terms.html">Terms</a><br>© 2026 RinsibIePluto</footer>
+</body>
+</html>

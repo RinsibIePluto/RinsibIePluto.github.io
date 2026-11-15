@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Vigenère cipher: how it works, its history and how to crack it · Cyrune</title>
+<meta name="description" content="The Vigenère cipher explained with the classic ATTACK AT DAWN example, why it was called unbreakable, and how Kasiski and Babbage broke it.">
+<link rel="canonical" href="https://cyrune.app/ciphers/vigenere-cipher/">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Vigenère cipher: how it works, its history and how to crack it · Cyrune">
+<meta property="og:description" content="The Vigenère cipher explained with the classic ATTACK AT DAWN example, why it was called unbreakable, and how Kasiski and Babbage broke it.">
+<meta property="og:url" content="https://cyrune.app/ciphers/vigenere-cipher/">
+<meta property="og:image" content="https://cyrune.app/og.png">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="theme-color" content="#15110f">
+<link rel="icon" href="/icon-192.png">
+<link rel="stylesheet" href="/assets/site.css?v=1">
+</head>
+<body>
+<header class="top"><a class="brand" href="/"><img src="/icon-192.png" alt="" width="34" height="34"><span>CYRUNE</span></a>
+<nav><a href="/play/">Play</a><a href="/ciphers/">Ciphers</a><a href="/about/">About</a></nav></header>
+<main><nav class="crumbs" aria-label="Breadcrumb"><a href="/">Home</a> › <a href="/ciphers/">Ciphers</a> › Vigenère cipher</nav>
+<h1>Vigenère cipher</h1>
+<p class="lead">The Vigenère cipher shifts each letter by a different amount, set by a keyword that repeats along the message. For three centuries it had a reputation as le chiffre indéchiffrable, the unbreakable cipher.</p><p class="meta">Difficulty in Cyrune: <span class="stars">★★★☆☆</span></p>
+<h2>A little history</h2>
+<p>The method was first published by Giovan Battista Bellaso in 1553, but in the 1800s it became credited to the French diplomat Blaise de Vigenère, and the name stuck. Because each letter can become many different letters, simple letter counting doesn't work, and the cipher earned its unbreakable reputation. It was broken in the mid-1800s, first by Charles Babbage, who never published his method, and then by the Prussian officer Friedrich Kasiski, who did, in 1863.</p>
+<h2>How it works</h2>
+<ol><li>Choose a keyword, for example <code>LEMON</code>.</li><li>Write it repeatedly under the message.</li><li>Shift each message letter by its key letter, counting A = 0, B = 1 … Z = 25.</li></ol>
+<table class="steps"><tr><th>Message</th><td>A</td><td>T</td><td>T</td><td>A</td><td>C</td><td>K</td><td>A</td><td>T</td><td>D</td><td>A</td><td>W</td><td>N</td></tr><tr><th>Key</th><td>L</td><td>E</td><td>M</td><td>O</td><td>N</td><td>L</td><td>E</td><td>M</td><td>O</td><td>N</td><td>L</td><td>E</td></tr><tr><th>Cipher</th><td>L</td><td>X</td><td>F</td><td>O</td><td>P</td><td>V</td><td>E</td><td>F</td><td>R</td><td>N</td><td>H</td><td>R</td></tr></table>
+<figure class="ex"><figcaption>The classic example</figcaption><div class="exrow"><span>Message</span><b><code>ATTACKATDAWN</code></b></div><div class="exrow"><span>Key</span><b><code>LEMONLEMONLE</code></b></div><div class="exrow"><span>Cipher</span><b><code>LXFOPVEFRNHR</code></b></div><p>Notice the two T's in ATTACK become X and F: the same letter encrypts differently depending on where it falls.</p></figure>
+<h2>How to crack it</h2>
+<p>Kasiski's insight was that the keyword repeats. If the same word appears twice in a long message at a distance that's a multiple of the keyword length, it encrypts the same way both times, leaving a repeated group in the ciphertext. Measure the gaps between repeats and their common factor reveals the keyword length. Then split the message into that many columns: each column is just a shift cipher, which you crack by letter counting.</p>
+<h2>Vigenère in Cyrune</h2>
+<p>Cyrune's Vigenère uses a two-letter key, so letters 1, 3 and 5 share one shift and letters 2 and 4 share another. A green tile tells you one key letter exactly, and that key letter also unlocks every other position that shares it.</p>
+<aside class="cta"><div><b>Crack a Vigenère puzzle</b><span>★★★☆☆ in Cyrune</span></div><a class="btn" href="/play/?practice=vig">Play now</a></aside><h2>Related ciphers</h2><ul class="rel"><li><a href="/ciphers/autokey-cipher/">Autokey cipher</a> <span>★★★☆☆</span></li><li><a href="/ciphers/beaufort-cipher/">Beaufort cipher</a> <span>★★★★☆</span></li><li><a href="/ciphers/running-key-cipher/">Running key</a> <span>★★★★★</span></li></ul><nav class="pn"><a href="/ciphers/shift-and-scramble/">← Shift + scramble</a><a href="/ciphers/beaufort-cipher/">Beaufort cipher →</a></nav>
+</main>
+<footer class="foot"><a href="/ciphers/">Cipher guides</a> · <a href="/about/">About</a> · <a href="/contact/">Contact</a> · <a href="/cyrune/privacy.html">Privacy</a> · <a href="/cyrune/terms.html">Terms</a><br>© 2026 RinsibIePluto</footer>
+</body>
+</html>

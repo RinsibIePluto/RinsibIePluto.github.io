@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Playfair cipher: encrypting letters in pairs · Cyrune</title>
+<meta name="description" content="The Playfair cipher explained: building the keyword square, the three rules for letter pairs, its use in war, and how to crack it.">
+<link rel="canonical" href="https://cyrune.app/ciphers/playfair-cipher/">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Playfair cipher: encrypting letters in pairs · Cyrune">
+<meta property="og:description" content="The Playfair cipher explained: building the keyword square, the three rules for letter pairs, its use in war, and how to crack it.">
+<meta property="og:url" content="https://cyrune.app/ciphers/playfair-cipher/">
+<meta property="og:image" content="https://cyrune.app/og.png">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="theme-color" content="#15110f">
+<link rel="icon" href="/icon-192.png">
+<link rel="stylesheet" href="/assets/site.css?v=1">
+</head>
+<body>
+<header class="top"><a class="brand" href="/"><img src="/icon-192.png" alt="" width="34" height="34"><span>CYRUNE</span></a>
+<nav><a href="/play/">Play</a><a href="/ciphers/">Ciphers</a><a href="/about/">About</a></nav></header>
+<main><nav class="crumbs" aria-label="Breadcrumb"><a href="/">Home</a> › <a href="/ciphers/">Ciphers</a> › Playfair cipher</nav>
+<h1>Playfair cipher</h1>
+<p class="lead">The Playfair cipher encrypts letters two at a time using a 5 × 5 square built from a keyword. Working in pairs hides single-letter patterns, which made it much stronger than the substitution ciphers before it.</p><p class="meta">Difficulty in Cyrune: <span class="stars">★★★★★</span></p>
+<h2>A little history</h2>
+<p>Charles Wheatstone invented the cipher in 1854, but it's named after his friend Lord Lyon Playfair, who promoted it to the British government. The British army used it in the Boer War and the First World War, because it was quick to use in the field with nothing but a pencil. In 1943, a coastwatcher's Playfair message helped rescue the crew of PT-109, the patrol boat commanded by the future US president John F. Kennedy.</p>
+<h2>How it works</h2>
+<p>First build the square: write the keyword's letters (dropping repeats), then the rest of the alphabet, with I and J sharing a cell. Here is the square for the keyword <code>CRANE</code>:</p>
+<table class="sq"><tr><th></th><th>1</th><th>2</th><th>3</th><th>4</th><th>5</th></tr><tr><th>1</th><td>C</td><td class=hl>R</td><td class=hl>A</td><td>N</td><td class=hl>E</td></tr><tr><th>2</th><td>B</td><td>D</td><td>F</td><td>G</td><td>H</td></tr><tr><th>3</th><td>I/J</td><td>K</td><td>L</td><td>M</td><td>O</td></tr><tr><th>4</th><td>P</td><td>Q</td><td>S</td><td class=hl>T</td><td>U</td></tr><tr><th>5</th><td>V</td><td class=hl>W</td><td>X</td><td>Y</td><td>Z</td></tr></table>
+<p>Then split the message into pairs (adding an X to finish an odd one) and encrypt each pair with three rules:</p>
+<ol><li><b>Same row:</b> take the letter to the right of each (wrapping round).</li><li><b>Same column:</b> take the letter below each (wrapping round).</li><li><b>Otherwise:</b> the two letters mark the corners of a rectangle; take the other two corners, staying in each letter's own row.</li></ol>
+<figure class="ex"><figcaption>Worked example: keyword CRANE</figcaption><div class="exrow"><span>Message</span><b><code>WATER</code></b></div><div class="exrow"><span>Pairs</span><b><code>WA TE RX</code></b></div><div class="exrow"><span>Cipher</span><b><code>XR UN AW</code></b></div></figure>
+<p>Decrypting reverses the rules: left instead of right, up instead of down; the rectangle rule is its own reverse.</p>
+<h2>How to crack it</h2>
+<p>Playfair hides single-letter frequencies, but pairs still have them: TH, HE and ER are common in English, and their encrypted forms show up as common pairs in the ciphertext. A pair and its reverse (AB and BA) encrypt to reversed pairs, and a letter never encrypts to itself. With a long enough message, a codebreaker can rebuild the square piece by piece.</p>
+<h2>Playfair in Cyrune</h2>
+<p>The five-letter word gets an X on the end to make three pairs, so there are six lamps, and the sixth must decode to the padding X. Pin letters you know (green tiles pin themselves), then Test keywords: it tries every common five-letter word as the keyword and lists the ones that fit.</p>
+<aside class="cta"><div><b>Crack a Playfair puzzle</b><span>★★★★★ in Cyrune</span></div><a class="btn" href="/play/?practice=playfair">Play now</a></aside><h2>Related ciphers</h2><ul class="rel"><li><a href="/ciphers/bifid-cipher/">Bifid cipher</a> <span>★★★★★</span></li><li><a href="/ciphers/polybius-square/">Polybius square</a> <span>★★★★☆</span></li><li><a href="/ciphers/keyword-cipher/">Keyword cipher</a> <span>★★★★☆</span></li></ul><nav class="pn"><a href="/ciphers/running-key-cipher/">← Running key</a><a href="/ciphers/bifid-cipher/">Bifid cipher →</a></nav>
+</main>
+<footer class="foot"><a href="/ciphers/">Cipher guides</a> · <a href="/about/">About</a> · <a href="/contact/">Contact</a> · <a href="/cyrune/privacy.html">Privacy</a> · <a href="/cyrune/terms.html">Terms</a><br>© 2026 RinsibIePluto</footer>
+</body>
+</html>

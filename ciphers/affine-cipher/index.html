@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Affine cipher: multiply, add and wrap around · Cyrune</title>
+<meta name="description" content="The affine cipher explained: letters as numbers, multiply by a and add b mod 26, why only 12 multipliers work, and how to crack it.">
+<link rel="canonical" href="https://cyrune.app/ciphers/affine-cipher/">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Affine cipher: multiply, add and wrap around · Cyrune">
+<meta property="og:description" content="The affine cipher explained: letters as numbers, multiply by a and add b mod 26, why only 12 multipliers work, and how to crack it.">
+<meta property="og:url" content="https://cyrune.app/ciphers/affine-cipher/">
+<meta property="og:image" content="https://cyrune.app/og.png">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="theme-color" content="#15110f">
+<link rel="icon" href="/icon-192.png">
+<link rel="stylesheet" href="/assets/site.css?v=1">
+</head>
+<body>
+<header class="top"><a class="brand" href="/"><img src="/icon-192.png" alt="" width="34" height="34"><span>CYRUNE</span></a>
+<nav><a href="/play/">Play</a><a href="/ciphers/">Ciphers</a><a href="/about/">About</a></nav></header>
+<main><nav class="crumbs" aria-label="Breadcrumb"><a href="/">Home</a> › <a href="/ciphers/">Ciphers</a> › Affine cipher</nav>
+<h1>Affine cipher</h1>
+<p class="lead">The affine cipher turns letters into numbers, multiplies them, adds a constant, and wraps the result back into the alphabet. It's a small step of maths beyond the Caesar shift, and a great introduction to how ciphers use arithmetic.</p><p class="meta">Difficulty in Cyrune: <span class="stars">★★★★☆</span></p>
+<h2>The idea</h2>
+<p>Number the alphabet from A = 0 to Z = 25. The affine cipher uses two key numbers, a and b, and turns each letter x into (a × x + b) mod 26: multiply, add, then keep the remainder after dividing by 26. The Caesar cipher is the special case a = 1. Another ancient cipher, Atbash, which reverses the alphabet (A↔Z, B↔Y), is the case a = 25, b = 25.</p>
+<h2>How it works</h2>
+<table class="steps wide"><tr><th>Letter</th><th>Number</th><th>a×x+b</th><th>mod 26</th><th>Cipher</th></tr><tr><td>S</td><td>18</td><td>5×18+8 = 98</td><td>20</td><td>U</td></tr><tr><td>P</td><td>15</td><td>5×15+8 = 83</td><td>5</td><td>F</td></tr><tr><td>I</td><td>8</td><td>5×8+8 = 48</td><td>22</td><td>W</td></tr><tr><td>E</td><td>4</td><td>5×4+8 = 28</td><td>2</td><td>C</td></tr><tr><td>S</td><td>18</td><td>5×18+8 = 98</td><td>20</td><td>U</td></tr></table>
+<figure class="ex"><figcaption>Worked example: a = 5, b = 8</figcaption><div class="exrow"><span>Message</span><b><code>SPIES</code></b></div><div class="exrow"><span>Cipher</span><b><code>UFWCU</code></b></div></figure>
+<h2>Why only some multipliers work</h2>
+<p>For the cipher to be reversible, no two letters may land on the same result. That only happens when a shares no factor with 26, so a must be odd and not 13. That leaves 12 choices: 1, 3, 5, 7, 9, 11, 15, 17, 19, 21, 23 and 25. With 26 choices for b, there are 312 keys in all. Try a = 2 and you'll see A and N both become the same letter.</p>
+<h2>How to crack it</h2>
+<p>312 keys is few enough to try them all with a computer. By hand, two known letters are enough: if you know which cipher letters two message letters became, you get two simple equations and can solve for a and b. In a longer message, letter counting gives you those two letters: the most common cipher letter is probably E, the next probably T.</p>
+<h2>Affine in Cyrune</h2>
+<p>Each letter always becomes the same letter, so repeated lamps mean repeated letters. Two green tiles with different letters are enough to work out both numbers; then set the two rotors to match. Cyrune rates it four stars because the multiplier hides the neat alphabet order you'd see in a shift.</p>
+<aside class="cta"><div><b>Crack a Affine puzzle</b><span>★★★★☆ in Cyrune</span></div><a class="btn" href="/play/?practice=affine">Play now</a></aside><h2>Related ciphers</h2><ul class="rel"><li><a href="/ciphers/shift-cipher/">Shift cipher</a> <span>★☆☆☆☆</span></li><li><a href="/ciphers/substitution-cipher/">Substitution cipher</a> <span>★★★★☆</span></li><li><a href="/ciphers/keyword-cipher/">Keyword cipher</a> <span>★★★★☆</span></li></ul><nav class="pn"><a href="/ciphers/beaufort-cipher/">← Beaufort cipher</a><a href="/ciphers/keyword-cipher/">Keyword cipher →</a></nav>
+</main>
+<footer class="foot"><a href="/ciphers/">Cipher guides</a> · <a href="/about/">About</a> · <a href="/contact/">Contact</a> · <a href="/cyrune/privacy.html">Privacy</a> · <a href="/cyrune/terms.html">Terms</a><br>© 2026 RinsibIePluto</footer>
+</body>
+</html>

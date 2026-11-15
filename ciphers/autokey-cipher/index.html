@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Autokey cipher: Vigenère&#x27;s own invention and how to crack it · Cyrune</title>
+<meta name="description" content="The autokey cipher explained: a short primer starts the key, then the message becomes its own key. Worked example and cracking tips.">
+<link rel="canonical" href="https://cyrune.app/ciphers/autokey-cipher/">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Autokey cipher: Vigenère&#x27;s own invention and how to crack it · Cyrune">
+<meta property="og:description" content="The autokey cipher explained: a short primer starts the key, then the message becomes its own key. Worked example and cracking tips.">
+<meta property="og:url" content="https://cyrune.app/ciphers/autokey-cipher/">
+<meta property="og:image" content="https://cyrune.app/og.png">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="theme-color" content="#15110f">
+<link rel="icon" href="/icon-192.png">
+<link rel="stylesheet" href="/assets/site.css?v=1">
+</head>
+<body>
+<header class="top"><a class="brand" href="/"><img src="/icon-192.png" alt="" width="34" height="34"><span>CYRUNE</span></a>
+<nav><a href="/play/">Play</a><a href="/ciphers/">Ciphers</a><a href="/about/">About</a></nav></header>
+<main><nav class="crumbs" aria-label="Breadcrumb"><a href="/">Home</a> › <a href="/ciphers/">Ciphers</a> › Autokey cipher</nav>
+<h1>Autokey cipher</h1>
+<p class="lead">The autokey cipher shifts each letter like the Vigenère cipher, but instead of repeating a short keyword, the message itself becomes the key after a short starter, the primer.</p><p class="meta">Difficulty in Cyrune: <span class="stars">★★★☆☆</span></p>
+<h2>A little history</h2>
+<p>This is the cipher Blaise de Vigenère actually described in his 1586 book on ciphers. The Italian scholar Girolamo Cardano had suggested using the message as its own key a few decades earlier, but his version was flawed. Vigenère fixed it with a primer: a short secret start to the key. Ironically, the cipher that now carries Vigenère's name, with its repeating keyword, was described earlier by Giovan Battista Bellaso.</p>
+<h2>How it works</h2>
+<ol><li>Choose a primer, for example <code>KO</code>.</li><li>Build the key: the primer followed by the message itself, as long as the message.</li><li>Shift each message letter by its key letter (A = 0, B = 1 … Z = 25).</li></ol>
+<table class="steps"><tr><th>Message</th><td>S</td><td>P</td><td>I</td><td>E</td><td>S</td></tr><tr><th>Key</th><td>K</td><td>O</td><td>S</td><td>P</td><td>I</td></tr><tr><th>Cipher</th><td>C</td><td>D</td><td>A</td><td>T</td><td>A</td></tr></table>
+<figure class="ex"><figcaption>Worked example: primer KO</figcaption><div class="exrow"><span>Message</span><b><code>SPIES</code></b></div><div class="exrow"><span>Key (primer + message)</span><b><code>KOSPI</code></b></div><div class="exrow"><span>Cipher</span><b><code>CDATA</code></b></div><p>S + K = C, P + O = D, then the message takes over: I + S = A, E + P = T, S + I = A.</p></figure>
+<p>To decrypt, you start with the primer: it reveals the first letters, which then serve as the key for the next ones, and so on down the chain.</p>
+<h2>How to crack it</h2>
+<p>Autokey avoids the Vigenère cipher's biggest weakness: there's no repeating keyword, so the patterns Kasiski and Babbage used don't appear. But the key is made of ordinary English text, and that is its undoing. A codebreaker guesses a common word somewhere in the message, works out what part of the key that implies, and checks whether that key also reads as English. Short primers can simply be tried one by one.</p>
+<h2>Autokey in Cyrune</h2>
+<p>Cyrune uses a two-letter primer. The first primer letter unlocks letters 1, 3 and 5 in a chain; the second unlocks 2 and 4. A wrong primer letter garbles everything after it in its chain, so a decode that starts well and then falls apart means you're close. A green tile confirms a chain.</p>
+<aside class="cta"><div><b>Crack a Autokey puzzle</b><span>★★★☆☆ in Cyrune</span></div><a class="btn" href="/play/?practice=autokey">Play now</a></aside><h2>Related ciphers</h2><ul class="rel"><li><a href="/ciphers/vigenere-cipher/">Vigenère cipher</a> <span>★★★☆☆</span></li><li><a href="/ciphers/running-key-cipher/">Running key</a> <span>★★★★★</span></li><li><a href="/ciphers/beaufort-cipher/">Beaufort cipher</a> <span>★★★★☆</span></li></ul><nav class="pn"><a href="/ciphers/pigpen-cipher/">← Pigpen cipher</a><a href="/ciphers/morse-code/">Run-on Morse →</a></nav>
+</main>
+<footer class="foot"><a href="/ciphers/">Cipher guides</a> · <a href="/about/">About</a> · <a href="/contact/">Contact</a> · <a href="/cyrune/privacy.html">Privacy</a> · <a href="/cyrune/terms.html">Terms</a><br>© 2026 RinsibIePluto</footer>
+</body>
+</html>

@@ -1273,6 +1273,14 @@ function playCode(v){
   practiceType(type,parseInt(m[2],36)>>>0,m[3]?{score:+m[3]}:null);
   toast(m[3]?`Friend's puzzle loaded: beat ${fmtPts(+m[3])}`:"Friend's puzzle loaded",2200);return true;
 }
+/* links from the website: ?practice=enigma opens that cipher, ?code=VIG-4K9Z2 loads a friend's puzzle */
+function linkTarget(){
+  try{const q=new URLSearchParams(location.search),t=(q.get("practice")||"").toLowerCase(),c=q.get("code");
+    if(!q.has("practice")&&!c)return null;
+    history.replaceState(null,"",location.pathname+location.hash);   /* a refresh shouldn't reload it */
+    if(c)return {code:c};if(TYPES[t])return {type:t};}catch(e){}
+  return null;
+}
 function visibleSlot(){return document.querySelector(`#${openModal} #fallbackSlot`)||document.getElementById("fallbackSlot");}
 function copyText(text){
   const fallback=()=>{const slot=visibleSlot();if(!slot)return;slot.innerHTML=`<textarea class="fallback" readonly aria-label="Text to copy"></textarea>`;const ta=slot.querySelector("textarea");ta.value=text;ta.focus();ta.select();toast("Copy the text below");};
@@ -1886,8 +1894,10 @@ function start(data){
   refresh();
   if(window.claude&&window.claude.hot&&window.claude.hot.snapshot)window.claude.hot.snapshot(()=>({state,stats}));
   bind();render();fit();save();
-  if((data&&data.state)||!settings.intro){const b=$("#intro");if(b)b.remove();}else bootScreen();
-  if(first)openGuide();else setTimeout(maybeWalkthrough,400);
+  const link=linkTarget();   /* arriving from a website link: skip the intro and open what was asked for */
+  if((data&&data.state)||!settings.intro||link){const b=$("#intro");if(b)b.remove();}else bootScreen();
+  if(link){if(link.code)playCode(link.code);else practiceType(link.type);}
+  else if(first)openGuide();else setTimeout(maybeWalkthrough,400);
   resumeTimer();scheduleReminders();initAds();
   try{if(!isNative()&&"serviceWorker" in navigator&&location.protocol==="https:")navigator.serviceWorker.register("sw.js").catch(()=>{});}catch(e){}
 }
