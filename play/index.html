@@ -305,6 +305,10 @@ a.btn{display:inline-flex;align-items:center;text-decoration:none}
 .bar.hi{background:var(--correct)}
 .rline{margin-top:8px;font-family:var(--f-mono);font-size:12px;color:var(--ivory)}
 .vs{margin-top:8px;font-size:13px;color:#e2d8c2}
+.remind-offer{margin-top:14px;padding:12px 14px;border:1px solid var(--line);border-radius:12px;background:var(--case)}
+.remind-offer p{font-size:13px;color:#e2d8c2;line-height:1.45}
+.remind-offer p b{color:var(--brass)}
+.remind-offer .actions{margin-top:10px}
 .statgrid.two{grid-template-columns:1fr 1fr;margin-top:6px}
 .tblwrap{overflow-x:auto}
 .bytype{width:100%;border-collapse:collapse;font-size:12px;font-variant-numeric:tabular-nums}
@@ -1222,11 +1226,13 @@ function weekendSat(n){const dow=nDate(n).getDay();return dow===6?n:dow===0?n-1:
 function weekendNo(n){const s=weekendSat(n);return s==null?0:Math.floor((s+1)/7)+1;}
 
 /* ---------- ads (Android app only) ----------
-   These are Google's public TEST ad units, which never pay out. To go live: put your own AdMob ad unit IDs below,
-   set live:true, and put your AdMob app ID in android/app/src/main/res/values/strings.xml (admob_app_id). */
+   live:false shows Google's public TEST ads (marked "Test Ad", never pay out): the plugin swaps in Google's test
+   unit IDs. live:true serves real ads from the units below (app ID in android/app/src/main/res/values/strings.xml).
+   CLOSED TEST: keep live:false so testers' taps can't count as invalid clicks on the AdMob account.
+   PRODUCTION: set live:true in the build you release to Production. */
 const ADS={
-  live:true,               /* real ads from the Cyrune AdMob account (app ID ca-app-pub-3371114867638821~9782380341) */
-  /* your AdMob ad units (Cyrune). Set live:false to go back to Google's test ads. */
+  live:false,              /* false = test ads for the closed test; true = real ads (app ID ca-app-pub-3371114867638821~9782380341) */
+  /* your AdMob ad units (Cyrune), used when live:true */
   banner:"ca-app-pub-3371114867638821/9559019064",        /* Results banner */
   interstitial:"ca-app-pub-3371114867638821/8245937395",  /* Practice break */
   rewarded:"ca-app-pub-3371114867638821/6120281599",      /* Extra hint */
@@ -1414,6 +1420,26 @@ async function scheduleReminders(){
   }catch(e){}
 }
 
+/* Reminder offer: on the results of the first daily puzzle finished in the app, while reminders are off.
+   It stays on that day's results until answered and is never shown on a later day. */
+function remindOfferHTML(g,mode){
+  if(!isNative()||!NATIVE.notes||mode!=="daily"||g.status==="playing"||settings.remind)return "";
+  const o=settings.remindOffer;
+  if(o&&(o.done||o.n!==g.n))return "";
+  if(!o){settings.remindOffer={n:g.n,done:false};saveSettings();}
+  return `<div class="remind-offer" id="remindOffer"><p><b>Get tomorrow's cipher?</b> A reminder at ${settings.remindTime||"08:00"} each day when the new puzzle is ready.</p>
+    <div class="actions"><button class="btn" data-act="remindyes">Remind me</button><button class="btn alt" data-act="remindno">No thanks</button></div></div>`;
+}
+async function answerRemindOffer(yes){
+  settings.remindOffer={n:(settings.remindOffer&&settings.remindOffer.n)||todayN(),done:true};
+  if(yes)settings.remind=true;
+  saveSettings();
+  if(yes)await scheduleReminders();               /* asks for notification permission; turns remind off again if refused */
+  const box=$("#remindOffer");if(!box)return;
+  if(yes&&settings.remind)box.innerHTML=`<p>Reminder set for ${settings.remindTime||"08:00"} each day. Change the time in the menu under Settings.</p>`;
+  else box.remove();
+}
+
 /* ---------- past puzzles ---------- */
 let calMonth=null;
 const dayN=d=>Math.round((new Date(d.getFullYear(),d.getMonth(),d.getDate())-EPOCH)/864e5)+1;
@@ -1449,6 +1475,7 @@ function menuHTML(){
     <button data-menu="walk">Show the walkthrough <span>${TYPES[P.type].short}</span></button>
     <a href="${siteURL("ciphers/")}" data-site="ciphers/">Full cipher guides <span>${isNative()?"17 guides":"cyrune.app ↗"}</span></a>
     <a href="${siteURL("about/")}" data-site="about/">About Cyrune <span>${isNative()?"how it works":"cyrune.app ↗"}</span></a>
+    <button data-menu="feedback">Send feedback <span>email</span></button>
   </div>
   <h3>Friend's challenge</h3>
   <p style="font-size:13px;color:var(--dim)">Got a code from a friend? Play their exact puzzle and see who scores higher.</p>
@@ -1473,6 +1500,30 @@ function menuAction(k){
   else if(k==="walk"){closeModal();startWalkthrough(true);}
   else if(k==="code"){const v=($("#codeIn")||{}).value||"";playCode(v);}
   else if(k==="adprivacy"){const M=AdMobAPI();if(M)M.showPrivacyOptionsForm().catch(()=>{});}
+  else if(k==="feedback")sendFeedback();
+}
+
+/* ---------- feedback email (app and web game): opens the mail app with version and device details filled in ---------- */
+const SUPPORT_EMAIL="jasonleroux10000000000@gmail.com";
+async function deviceDetails(){
+  const web=!isNative(),ua=navigator.userAgent,m=ua.match(/Android ([\d.]+);\s*([^;)]+?)(?:\s+Build\/|\))/);
+  const uaModel=m&&m[2]!=="K"&&!/^wv$/.test(m[2])?m[2]:"";
+  try{const U=navigator.userAgentData;if(U&&U.getHighEntropyValues){
+    const h=await U.getHighEntropyValues(["model","platformVersion","fullVersionList"]);
+    const os=h.platform==="Android"?`Android ${(h.platformVersion||"").replace(/(\.0)+$/,"")}`.trim():h.platform;
+    const br=web&&(h.fullVersionList||U.brands||[]).find(b=>!/brand|chromium/i.test(b.brand));
+    const out=[h.model||uaModel,os,br?`${br.brand} ${String(br.version).split(".")[0]}`:""].filter(Boolean).join(", ");
+    if(out)return out;}}catch(e){}
+  if(m)return uaModel?`${uaModel}, Android ${m[1]}`:`Android ${m[1]}`;
+  if(/iPhone|iPad/.test(ua)){const v=ua.match(/OS (\d+)_/);return `${/iPad/.test(ua)?"iPad":"iPhone"}${v?`, iOS ${v[1]}`:""}`;}
+  return /Windows/.test(ua)?"Windows":/Mac OS X/.test(ua)?"Mac":/Linux/.test(ua)?"Linux":"unknown";
+}
+async function sendFeedback(){
+  let ver="";const a=AppAPI(),native=isNative();
+  try{if(native&&a&&a.getInfo){const i=await a.getInfo();ver=(i&&i.version)||"";}}catch(e){}
+  const where=native?`Cyrune ${ver||"(version unknown)"} · Android app`:"Cyrune · web game (cyrune.app/play)";
+  const body=`\n\n\n---\n${where}\nDevice: ${await deviceDetails()}\nToday's puzzle: No. ${pad3(todayN())}`;
+  location.href=`mailto:${SUPPORT_EMAIL}?subject=${encodeURIComponent("Cyrune feedback")}&body=${encodeURIComponent(body)}`;
 }
 function toggleSetting(k){
   settings[k]=!settings[k];saveSettings();applySettings();
@@ -1811,6 +1862,7 @@ function openStats(){
       ${mode==="practice"&&g.status!=="playing"?`<button class="btn alt" data-act="challenge">Challenge a friend</button>`:""}
       ${mode==="practice"?`<button class="btn alt" data-practice="${P.type}">New ${T.short}</button>`:`<button class="btn alt" data-act="gopractice">Practice</button>`}
     </div>
+    ${remindOfferHTML(g,mode)}
     <div id="fallbackSlot"></div>
     <h3>Daily record</h3>
     <div class="statgrid"><div class="stat"><b>${stats.played}</b><span>Played</span></div><div class="stat"><b>${pct}</b><span>Win %</span></div><div class="stat"><b>${streak}</b><span>Streak</span></div><div class="stat"><b>${stats.best}</b><span>Best streak</span></div></div>
@@ -1920,6 +1972,8 @@ function bind(){
     else if(a.dataset.act==="challenge")challengeFriend();
     else if(a.dataset.act==="gopractice"){closeModal();setMode("practice");}
     else if(a.dataset.act==="install")doInstall();
+    else if(a.dataset.act==="remindyes")answerRemindOffer(true);
+    else if(a.dataset.act==="remindno")answerRemindOffer(false);
   }));
   $("#menuModal").addEventListener("change",e=>{if(e.target.id==="remindTime"){settings.remindTime=e.target.value||"08:00";saveSettings();scheduleReminders();}});
   $("#menuModal").addEventListener("keydown",e=>{if(e.target.id==="codeIn"&&e.key==="Enter"){e.preventDefault();menuAction("code");}});
