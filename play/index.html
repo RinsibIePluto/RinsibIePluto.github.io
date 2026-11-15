@@ -48,6 +48,8 @@ button:focus-visible,input:focus-visible{outline:2px solid var(--lamp);outline-o
 .sb-mark{display:none}
 .sb-word{display:none}
 .sb-links{display:flex;align-items:center;gap:2px}
+.native .sb-home{display:none}            /* in the app the bar is just Ciphers · About · Play */
+.native .sb-in{justify-content:flex-end}
 .sb-links a,.sb-links b{font-size:12px;font-weight:700;letter-spacing:.05em;padding:5px 10px;border-radius:999px;text-decoration:none;color:var(--ivory)}
 .sb-links b{background:var(--brass);color:#1a1410;margin-left:2px}
 /* very short screens: give the board the room (the same links are in the menu); the status-bar inset stays */
@@ -1912,7 +1914,8 @@ function bind(){
     inp.value=w;$("#out-"+t).innerHTML=w?GUIDE[t].run(w):"";
   });
   {const app=AppAPI();if(app)app.addListener("backButton",onBack);}
-  if(isNative())document.querySelectorAll(".sitebar a[data-site]").forEach(a=>a.setAttribute("href",siteURL(a.dataset.site)));
+  if(isNative()){document.documentElement.classList.add("native");
+    document.querySelectorAll(".sitebar a[data-site]").forEach(a=>a.setAttribute("href",siteURL(a.dataset.site)));}
   document.addEventListener("keydown",e=>{
     if(e.ctrlKey||e.metaKey||e.altKey)return;
     if(e.target&&(e.target.tagName==="INPUT"||e.target.tagName==="TEXTAREA")&&e.key!=="Escape")return;
