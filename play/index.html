@@ -39,7 +39,7 @@ html,body{height:100%}
 body{background:radial-gradient(120% 70% at 50% -10%,#2a211b 0%,rgba(21,17,15,0) 60%),var(--bakelite);color:var(--ivory);font-family:var(--f-body);-webkit-font-smoothing:antialiased;overflow:hidden;display:flex;flex-direction:column}
 button{font:inherit;color:inherit;background:none;border:0;cursor:pointer;touch-action:manipulation;-webkit-tap-highlight-color:transparent}
 button:focus-visible,input:focus-visible{outline:2px solid var(--lamp);outline-offset:2px}
-.app{flex:1 1 auto;min-height:0;width:100%;max-width:520px;margin:0 auto;display:flex;flex-direction:column;gap:7px;
+.app{flex:1 1 auto;min-height:0;max-height:940px;width:100%;max-width:520px;margin:auto;display:flex;flex-direction:column;gap:7px;
   padding:5px 12px calc(8px + var(--safe-area-inset-bottom,env(safe-area-inset-bottom,0px)))}
 /* website bar across the top (the same menu as cyrune.app); it also carries the status-bar inset in the app */
 .sitebar{flex:none;padding-top:var(--safe-area-inset-top,env(safe-area-inset-top,0px));border-bottom:1px solid rgba(192,155,96,.18);background:rgba(13,10,8,.5)}
@@ -237,7 +237,7 @@ body.ad-on .modal{padding-bottom:calc(16px + var(--ad-h,60px) + var(--safe-area-
 .modal{position:fixed;inset:0;background:rgba(8,6,5,.74);display:flex;align-items:center;justify-content:center;z-index:40;
   padding:calc(16px + var(--safe-area-inset-top,env(safe-area-inset-top,0px))) 16px calc(16px + var(--safe-area-inset-bottom,env(safe-area-inset-bottom,0px)))}
 .modal[hidden]{display:none}
-.sheet{position:relative;width:100%;max-width:460px;max-height:100%;overflow:auto;background:var(--case);border:1px solid #4d4033;border-radius:14px;padding:20px 18px 18px;box-shadow:0 20px 50px rgba(0,0,0,.55);overscroll-behavior:contain}
+.sheet{position:relative;width:100%;max-width:460px;max-height:calc(100% / var(--ui,1));transform:scale(var(--ui,1));overflow:auto;background:var(--case);border:1px solid #4d4033;border-radius:14px;padding:20px 18px 18px;box-shadow:0 20px 50px rgba(0,0,0,.55);overscroll-behavior:contain}
 .sheet h2{font-family:var(--f-display);font-weight:400;font-size:22px;letter-spacing:.05em;color:var(--brass);text-wrap:balance;margin-bottom:10px;padding-right:36px}
 .sheet h3{font-size:10px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:var(--dim);margin:18px 0 8px}
 .sheet p,.sheet li{font-size:14px;line-height:1.5;color:#e2d8c2}
@@ -1090,7 +1090,17 @@ function renderKeyboard(){
   $("#kb").classList.toggle("keying",!!sel);
 }
 function render(){renderHeader();renderStrip();renderIntercept();renderBoard();renderKeyboard();}
+/* big screens (tablets, monitors, a phone in desktop mode): draw the game at its phone size and scale it up to fill */
+function scaleApp(){
+  const app=$("#app"),bar=document.querySelector(".sitebar");
+  app.style.transform=app.style.height=app.style.flex=app.style.marginTop=app.style.transformOrigin="";
+  const availH=innerHeight-(bar?bar.offsetHeight:0),sc=Math.min((innerWidth-24)/520,availH/940);
+  document.documentElement.style.setProperty("--ui",sc>1.08?sc.toFixed(3):"1");   /* popups scale with the game */
+  if(sc>1.08){app.style.flex="none";app.style.height="940px";app.style.transformOrigin="top center";
+    app.style.transform=`scale(${sc.toFixed(3)})`;app.style.marginTop=Math.max(0,Math.floor((availH-940*sc)/2))+"px";}
+}
 function fit(){
+  scaleApp();
   const b=$("#board");const h=b.clientHeight,w=b.clientWidth;
   const t=Math.max(21,Math.min(62,Math.floor((h-25)/6),Math.floor((w-20)/5)));
   document.documentElement.style.setProperty("--tile",t+"px");
