@@ -1,5 +1,5 @@
 /* Cyrune offline cache. Bump CACHE when releasing a new version. */
-const CACHE = "cyrune-584bbe3c";
+const CACHE = "cyrune-e78e48bf";
 const CORE = ["./", "./index.html", "./manifest.webmanifest", "./icons/icon-192.png", "./icons/icon-512.png", "./icons/icon-maskable-512.png", "./icons/apple-touch-icon.png", "./fonts/fonts.css", "./fonts/archivo-latin-400-normal.woff2", "./fonts/archivo-latin-500-normal.woff2", "./fonts/archivo-latin-700-normal.woff2", "./fonts/martian-mono-latin-400-normal.woff2", "./fonts/martian-mono-latin-600-normal.woff2", "./fonts/martian-mono-latin-700-normal.woff2", "./fonts/saira-stencil-one-latin-400-normal.woff2"];
 
 self.addEventListener("install", e => {
