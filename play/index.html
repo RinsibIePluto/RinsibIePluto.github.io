@@ -170,6 +170,15 @@ body.ad-on .modal{padding-bottom:calc(16px + var(--ad-h,60px) + var(--safe-area-
 .pgrow{display:inline-flex;gap:6px;vertical-align:middle}
 .pgrow .pg svg{width:18px;height:18px}
 .rotor.wide .rwin{width:58px;font-size:12px}
+.pigrows .erow{gap:8px}
+.pigdial{display:inline-flex;align-items:center;gap:5px}
+.pigdial .dlabel{min-width:26px;text-align:right}
+.pigdial .rwin{width:44px;font-size:11px}
+.pigrows.tight .erow{gap:5px}
+.pigrows.tight .pigdial{gap:3px}
+.pigrows.tight .pigdial .dlabel{min-width:0}
+.pigrows.tight .pigdial .rwin{width:40px;font-size:10.5px}
+.pigrows.tight .step{width:20px}
 .lamp.boot{animation:lampOn .9s ease-out both;animation-delay:calc(var(--i)*90ms)}
 @keyframes lampOn{0%{color:#3d3226;text-shadow:none}35%{color:var(--lamp);text-shadow:0 0 6px rgba(255,190,90,.85),0 0 16px rgba(255,160,50,.45)}45%{color:#6d5838;text-shadow:none}60%,100%{color:var(--lamp);text-shadow:0 0 6px rgba(255,190,90,.85),0 0 16px rgba(255,160,50,.45)}}
 .window{width:32px;height:24px;border-radius:4px;background:var(--ivory);color:#1b1511;font-family:var(--f-mono);font-weight:700;font-size:13px;display:grid;place-items:center;box-shadow:inset 0 2px 3px rgba(0,0,0,.35)}
@@ -569,7 +578,7 @@ const TYPES={
   playfair:{name:"Playfair cipher",short:"Playfair",stars:5},
   double:{name:"Double cipher",short:"Double",stars:5},
   railfence:{name:"Rail fence",short:"Rail fence",stars:2},
-  pigpen:{name:"Pigpen cipher",short:"Pigpen",stars:2},
+  pigpen:{name:"Pigpen cipher",short:"Pigpen",stars:3},
   polybius:{name:"Polybius square",short:"Polybius",stars:4},
   bifid:{name:"Bifid cipher",short:"Bifid",stars:5},
   adfgvx:{name:"ADFGVX cipher",short:"ADFGVX",stars:4}
@@ -643,7 +652,7 @@ const ENC={
   running:(w,k)=>[...w].map((c,i)=>A[(idx(c)+idx(k[i]))%26]).join(""),
   playfair:(w,kw)=>pfCrypt(pfSquare(kw),w,1),
   railfence:(w,r,o)=>railOrder(w.length,r,o).map(i=>w[i]).join(""),
-  pigpen:(w,t)=>[...w].map(L=>pigLetter(pigT(pigCell(L),t))).join(""),
+  pigpen:(w,t)=>[...w].map(L=>{const c=pigCell(L);return pigLetter(pigT(c,Array.isArray(t)?t[c.g]:t));}).join(""),
   polybius:(w,kw)=>{const sq=pfSquare(kw);return [...w.replace(/J/g,"I")].map(ch=>{const i=sq.indexOf(ch);return `${Math.floor(i/5)+1}${i%5+1}`;}).join("");},
   bifid:(w,kw)=>bfEncrypt(pfSquare(kw),w.replace(/J/g,"I")),
   adfgvx:(w,o)=>{const cols=adfgCols(adfgFrac(w));return o.map(j=>cols[j]).join("");}
@@ -665,7 +674,8 @@ function pfCrypt(sq,text,dir){
 /* Rail fence: letters written on a zigzag over r rails (starting o steps into the zigzag), then read rail by rail */
 function railOrder(n,r,o){const L=2*(r-1),rail=[];for(let i=0;i<n;i++){const t=(i+o)%L;rail.push(t<r?t:L-t);}
   const order=[];for(let k=0;k<r;k++)for(let i=0;i<n;i++)if(rail[i]===k)order.push(i);return order;}
-/* Pigpen: two tic-tac-toe grids (the second dotted) and two X shapes; the key is how the grid is turned or flipped */
+/* Pigpen: two tic-tac-toe grids (the second dotted) and two X shapes. The key is how each of the four grids is
+   turned or flipped (8 ways each, set separately), so a single rotor can no longer spin straight to the answer. */
 const PIG_X={S:0,T:3,U:1,V:2,W:0,X:3,Y:1,Z:2};             /* X cells: 0 top, 1 right, 2 bottom, 3 left */
 function pigCell(L){const i=idx(L);if(i<18){const j=i%9;return{g:i<9?0:1,r:Math.floor(j/3),c:j%3};}return{g:i<22?2:3,x:PIG_X[L]};}
 function pigLetter(cl){if(cl.g<2)return A[cl.g*9+cl.r*3+cl.c];return [...(cl.g===2?"STUV":"WXYZ")].find(ch=>PIG_X[ch]===cl.x);}
@@ -673,6 +683,9 @@ function pigT(cl,t){const k=t%4,m=t>=4,c=Object.assign({},cl);
   if(c.g<2){let r=c.r,cc=c.c;if(m)cc=2-cc;for(let i=0;i<k;i++){const nr=cc,nc=2-r;r=nr;cc=nc;}c.r=r;c.c=cc;}
   else{let x=c.x;if(m)x=[0,3,2,1][x];c.x=(x+k)%4;}return c;}
 const PIG_TURNS=["0°","90°","180°","270°","⇄ 0°","⇄ 90°","⇄ 180°","⇄ 270°"];
+const PIG_SHORT=["0°","90°","180°","270°","⇄0°","⇄90°","⇄180°","⇄270°"],PIG_GRIDS=["A–I","J–R","S–V","W–Z"];
+const pigGridsOf=w=>[0,1,2,3].filter(g=>[...w].some(L=>pigCell(L).g===g));       /* grids the word uses */
+const pigTs=d=>Array.isArray(d.t)?d.t:[null,null,null,null];                       /* older saves held one number */
 function pigSVG(L){
   const cl=pigCell(L),dot=cl.g===1||cl.g===3;let d="",dotXY=[12,12];
   if(cl.g<2){if(cl.r>0)d+="M4 4H20";if(cl.r<2)d+="M4 20H20";if(cl.c>0)d+="M4 4V20";if(cl.c<2)d+="M20 4V20";}
@@ -729,7 +742,7 @@ function build(type,word,seed){
     let rr,o,tries=0;do{rr=2+Math.floor(r()*3);o=Math.floor(r()*(2*rr-2));cipher=ENC.railfence(word,rr,o);tries++;}while(cipher===word&&tries<50);
     key={r:rr,o};
   }else if(type==="pigpen"){
-    let t,tries=0;do{t=1+Math.floor(r()*7);cipher=ENC.pigpen(word,t);tries++;}while(cipher===word&&tries<20);key={t};
+    let t,tries=0;do{t=[0,1,2,3].map(()=>1+Math.floor(r()*7));cipher=ENC.pigpen(word,t);tries++;}while(cipher===word&&tries<20);key={t};
   }else if(type==="polybius"||type==="bifid"){
     const kw=pickKeyword(r,word);key={kw};cipher=ENC[type](word,kw);
   }else if(type==="adfgvx"){
@@ -783,7 +796,7 @@ function freshDec(t){
     case"playfair":return{kw:"",crib:{},bombe:null};
     case"double":return{slots:[null,null,null,null,null],k:[null,null,null],ai:null,b:null};
     case"railfence":return{r:null,o:0};
-    case"pigpen":return{t:null};
+    case"pigpen":return{t:[null,null,null,null]};
     case"polybius":case"bifid":return{kw:"",crib:{},bombe:null};
     case"adfgvx":return{slots:[null,null,null,null,null]};
     default:return{pos:[0,0,0],crib:{},bombe:null};
@@ -809,7 +822,8 @@ function decode(P,d){
     case"playfair":return d.kw?[...pfCrypt(pfSquare(d.kw),P.cipher,-1)]:c.map(()=>"");
     case"double":return innerDecode(P.inner,d.slots.map(s=>s==null?null:c[s]),d);
     case"railfence":{if(d.r==null)return ["","","","",""];const ord=railOrder(5,d.r,d.o||0),out=Array(5).fill("");ord.forEach((pi,j)=>{out[pi]=P.cipher[j];});return out;}
-    case"pigpen":{if(d.t==null)return ["","","","",""];const inv={};for(const L of A)inv[ENC.pigpen(L,d.t)]=L;return [...P.cipher].map(ch=>inv[ch]);}
+    case"pigpen":{const T=pigTs(d);return [...P.cipher].map(ch=>{const g=pigCell(ch).g;if(T[g]==null)return "";
+      return [...A].find(L=>pigCell(L).g===g&&ENC.pigpen(L,T[g])===ch)||"";});}
     case"polybius":case"bifid":return d.kw?[...kwDecrypt(P.type,d.kw,P.cipher)]:["","","","",""];
     case"adfgvx":{
       const top=Array(5).fill(null),bot=Array(5).fill(null);
@@ -960,7 +974,7 @@ function keyText(){
     case"double":{const o=k.order.map(i=>i+1).join("-"),ik=P.inner==="affine"?`×${k.a} +${k.b}`:P.inner==="autokey"?`primer ${k.p.map(x=>A[x]).join("")}`:`key ${k.k.map(x=>A[x]).join("")}`;
       return `${P.label} · ${TYPES[P.inner].short} ${ik}, then order ${o}`;}
     case"railfence":return `${k.r} rails, starting at step ${k.o+1} of the zigzag · read off rail by rail`;
-    case"pigpen":return `Grid turned ${PIG_TURNS[k.t]} · every symbol moved with it`;
+    case"pigpen":{const t=Array.isArray(k.t)?k.t:[k.t,k.t,k.t,k.t];return pigGridsOf(P.word).map(g=>`${PIG_GRIDS[g]} ${PIG_TURNS[t[g]]}`).join(" · ");}
     case"polybius":return `Keyword ${k.kw} · square ${pfSquare(k.kw).match(/...../g).join(" ")}`;
     case"bifid":return `Keyword ${k.kw} · rows ${[...P.word].map(c=>Math.floor(pfSquare(k.kw).indexOf(c)/5)+1).join("")}, columns ${[...P.word].map(c=>pfSquare(k.kw).indexOf(c)%5+1).join("")}, then re-paired`;
     case"adfgvx":return `Columns were sent in the order ${k.order.map(j=>j+1).join("-")} · signals ${adfgFrac(P.word).match(/../g).join(" ")}`;
@@ -1074,8 +1088,15 @@ function renderIntercept(){
       d.innerHTML=`<span class="dlabel">Key word ↑<br>Message ↓</span><span class="spacer"></span>${any?`<button class="ghost" data-act="clear">Clear</button>`:""}${use(full)}`;break;}
     case"railfence":
       d.innerHTML=`<span class="dlabel">Rails</span>${rotor(0,D.r==null?"?":D.r,false)}<span class="dlabel">Start</span>${rotor(1,D.r==null?"–":D.o+1,false)}<span class="spacer"></span>${use(full)}`;break;
-    case"pigpen":
-      d.innerHTML=`<span class="dlabel">Turn</span><span class="rotor wide">${rotor(0,D.t==null?"?":PIG_TURNS[D.t],false).replace(/^<span class="rotor">|<\/span>$/g,"")}</span><span class="spacer"></span><button class="ghost line" data-act="pigchart">Chart</button>${use(full)}`;break;
+    case"pigpen":{
+      /* one rotor per grid the word uses, two to a row; Chart and Use go wherever there is room */
+      const T=pigTs(D),gs=pigGridsOf(P.cipher),grp=g=>`<span class="pigdial"><span class="dlabel">${PIG_GRIDS[g]}</span>${rotor(g,T[g]==null?"?":PIG_SHORT[T[g]],false)}</span>`;
+      const btns=`<span class="spacer"></span><button class="ghost line" data-act="pigchart">Chart</button>${use(full)}`;
+      const chart=`<button class="ghost line" data-act="pigchart">Chart</button>`,rows=[];
+      for(let i=0;i<gs.length;i+=2)rows.push(gs.slice(i,i+2).map(grp).join(""));
+      if(gs.length===4){rows[0]+=`<span class="spacer"></span>${chart}`;rows[1]+=`<span class="spacer"></span>${use(full)}`;}  /* keeps four grids to two rows */
+      else if(gs.length%2===1||gs.length===0)rows[rows.length-1]=(rows[rows.length-1]||"")+btns;else rows.push(btns);
+      d.innerHTML=`<div class="enigma pigrows${gs.length===4?" tight":""}">${rows.map(r=>`<div class="erow">${r}</div>`).join("")}</div>`;break;}
     case"adfgvx":{
       const any=D.slots.some(x=>x!=null);
       d.innerHTML=`<span class="dlabel">Tap the columns<br>in their real order</span><span class="spacer"></span>${any?`<button class="ghost" data-act="clear">Clear</button>`:""}${use(full)}`;break;}
@@ -1281,7 +1302,7 @@ async function rewardedHint(){
 const WT={
   shift:"Turn the key rotor (‹ ›). One of the 25 settings makes the windows spell the word.",
   railfence:"Set the number of rails and where the zigzag starts. The windows show the letters read back off the rails.",
-  pigpen:"Turn the grid until the symbols make sense (Chart shows the usual grid). The windows show the letters for that turn.",
+  pigpen:"Each grid (A–I, J–R, S–V, W–Z) has its own turn. A green tile shows how one symbol moved, which leaves only two possible turns for its grid. Chart shows the usual grid.",
   autokey:"Set the two primer letters. The first unlocks letters 1, 3 and 5 in a chain; the second unlocks 2 and 4.",
   morse:"Tap a window and type the letter you think it holds. The tape turns green where your letters fit and red where they can't.",
   scramble:"Turn the shift rotor until the small letters under the lamps could spell a word, then tap the lamps in word order.",
@@ -1599,7 +1620,7 @@ function stepKey(slot,dir){
     case"railfence":
       if(slot===0||D.r==null){const rs=[2,3,4];D.r=rs[(rs.indexOf(D.r==null?(dir>0?4:2):D.r)+dir+3)%3];D.o=Math.min(D.o||0,2*D.r-3);}
       else D.o=((D.o||0)+dir+(2*D.r-2))%(2*D.r-2);break;
-    case"pigpen":D.t=cyc(D.t,8);break;
+    case"pigpen":D.t=pigTs(D).slice();D.t[slot]=cyc(D.t[slot],8);break;
   }
   sfx("rotor");buzz("tap");save();renderIntercept();
 }
@@ -1702,9 +1723,9 @@ const GUIDE={
   railfence:{how:"One of the oldest transposition ciphers. Write the word in a zigzag across two, three or four rails, then read each rail in turn. Here the zigzag can also start part-way down, so the key is the number of rails plus a starting step.",
     ex:"3 rails, start 1: HELLO → "+ENC.railfence("HELLO",3,0),crack:"The lamps are the right letters in the wrong order, so it's an anagram with only a dozen possible zigzags. Turn the two rotors and watch the windows; greens confirm a setting.",
     tryLabel:"3 rails, start 1",run:w=>ENC.railfence(w,3,0)},
-  pigpen:{how:"The Freemasons' cipher from the 1700s: each letter becomes the shape of the grid cell it sits in, with a dot for the second grid. Today's grid has been turned or flipped, so the shapes don't match the usual chart.",
-    ex:"Turned 90°: HELLO → "+pigRow(ENC.pigpen("HELLO",1)),crack:"There are only eight ways to turn or flip the grid. E and N sit in the middle of their grids, so they never move. Tap Chart to see the usual shapes, then turn the rotor until the windows read as a word.",
-    tryLabel:"Turned 90°",run:w=>pigRow(ENC.pigpen(w,1))},
+  pigpen:{how:"The Freemasons' cipher from the 1700s: each letter becomes the shape of the grid cell it sits in, with a dot for the second grid. Today each of the four grids (A–I, J–R, S–V, W–Z) has been turned or flipped on its own, so the shapes don't match the usual chart.",
+    ex:"A–I turned 90°, J–R turned 270°: HELLO → "+pigRow(ENC.pigpen("HELLO",[1,3,0,0])),crack:"Each grid can be turned or flipped eight ways, and each has its own rotor. E and N sit in the middle of their grids, so they never move. Guess a word first: a green tile shows how one symbol moved, which leaves only two possible turns for its grid. Tap Chart to see the usual shapes.",
+    tryLabel:"A–I 90°, J–R 270°",run:w=>pigRow(ENC.pigpen(w,[1,3,0,0]))},
   polybius:{how:"Described by the Greek historian Polybius about 2,200 years ago: each letter becomes its row and column number in a 5×5 square, with I and J sharing a cell. Here the square starts with a secret five-letter keyword. The same idea became the tap code prisoners used to talk through walls.",
     ex:"Keyword CRANE: HELLO → "+ENC.polybius("HELLO","CRANE").match(/../g).join(" "),crack:"Lamps with the same first number share a row of the square. Pin letters you know by tapping a window (greens pin themselves), then Test keywords lists every common word whose square fits.",
     tryLabel:"Keyword CRANE",run:w=>ENC.polybius(w,"CRANE").match(/../g).join(" ")},
