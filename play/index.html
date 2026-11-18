@@ -881,8 +881,10 @@ function pinsOf(G,P){return Object.assign({},G.dec.crib,knownOf(G,P));}
 
 /* ---------- state ---------- */
 const STORE="cyrune.v1",OLD_STORE="cipherle.v2";
-const freshGame=t=>({guesses:[],input:"",status:"playing",dec:freshDec(t),counted:false,hints:[],ms:0,started:false,hard:!!settings.hard,notes:{},score:null});
-const freshStats=()=>({played:0,won:0,dist:[0,0,0,0,0,0],streak:0,best:0,lastWon:0,bestScore:0,totalScore:0,byType:{},weekend:{played:0,won:0,best:0}});
+/* four guesses: few enough that plain Wordle-style guessing is risky, so cracking the cipher is the reliable route */
+const MAXG=4;
+const freshGame=t=>({guesses:[],input:"",status:"playing",dec:freshDec(t),counted:false,hints:[],ms:0,started:false,hard:!!settings.hard,notes:{}});
+const freshStats=()=>({played:0,won:0,dist:[0,0,0,0],streak:0,best:0,lastWon:0,byType:{},weekend:{played:0,won:0}});
 let state,stats,P,sel=null,revealing=false,justRevealed=null,bootLamps=true,openModal=null,cdTimer=null,deferredPrompt=null;
 
 function load(){try{return JSON.parse(localStorage.getItem(STORE)||localStorage.getItem(OLD_STORE)||"null");}catch(e){return null;}}
@@ -1048,7 +1050,7 @@ function renderIntercept(){
   if(done){
     const won=g.status==="won";
     const label=state.mode==="practice"?"Next ›":"Results";
-    d.innerHTML=`<div class="debrief ${won?"won":"lost"}"><div class="txt"><b>${won?`Cracked in ${g.guesses.length}/6 · ${fmtPts(g.score)} pts`:`Locked out · ${P.word}`}</b><span>${keyText()}</span></div><button class="next" data-act="next">${label}</button></div>`;
+    d.innerHTML=`<div class="debrief ${won?"won":"lost"}"><div class="txt"><b>${won?`Cracked in ${g.guesses.length}/${MAXG}`:`Locked out · ${P.word}`}</b><span>${keyText()}</span></div><button class="next" data-act="next">${label}</button></div>`;
     return;
   }
   const full=withHints(g,dec.slice(0,5)).every(Boolean);
@@ -1117,7 +1119,7 @@ function renderIntercept(){
 }
 function renderBoard(){
   const g=G();let html="";
-  for(let r=0;r<6;r++){
+  for(let r=0,rows=Math.max(MAXG,g.guesses.length);r<rows;r++){   /* older saves may hold more guesses */
     let cells,label;
     if(r<g.guesses.length){
       const w=g.guesses[r],res=score(w,P.word),flip=justRevealed&&justRevealed.row===r;
@@ -1152,7 +1154,7 @@ function scaleApp(){
 function fit(){
   scaleApp();
   const b=$("#board");const h=b.clientHeight,w=b.clientWidth;
-  const t=Math.max(21,Math.min(62,Math.floor((h-25)/6),Math.floor((w-20)/5)));
+  const t=Math.max(21,Math.min(62,Math.floor((h-25)/MAXG),Math.floor((w-20)/5)));
   document.documentElement.style.setProperty("--tile",t+"px");
 }
 
@@ -1161,7 +1163,7 @@ function toast(msg,ms){const el=document.createElement("div");el.className="toas
 function shakeRow(){const row=document.querySelector(`.row[data-row="${G().guesses.length}"]`);if(!row)return;row.classList.remove("shake");void row.offsetWidth;row.classList.add("shake");row.addEventListener("animationend",()=>row.classList.remove("shake"),{once:true});}
 const PRAISE=["Instant break","Bletchley grade","Clean crack","Decrypted","Got through","Just in time"];
 
-/* ---------- timer, hints and score ---------- */
+/* ---------- timer and hints ---------- */
 /* the clock starts at your first key press or dial turn, and pauses while the app is in the background */
 let tStart=null;
 function pauseTimer(){const g=G();if(tStart!=null&&g)g.ms=(g.ms||0)+(performance.now()-tStart);tStart=null;}
@@ -1169,7 +1171,6 @@ function resumeTimer(){const g=G();if(tStart==null&&g&&g.started&&g.status==="pl
 function touchGame(){const g=G();if(g.status!=="playing")return;if(!g.started){g.started=true;}resumeTimer();}
 function elapsed(g){return (g.ms||0)+(g===G()&&tStart!=null?performance.now()-tStart:0);}
 const fmtTime=ms=>{const s=Math.floor(ms/1000);return `${Math.floor(s/60)}:${String(s%60).padStart(2,"0")}`;};
-const fmtPts=n=>Number(n||0).toLocaleString("en-US");
 setInterval(()=>{const el=document.getElementById("icTimer"),g=state&&G();if(el&&g)el.textContent=fmtTime(elapsed(g));},1000);
 const MAX_HINTS=2;
 function useHint(){
@@ -1181,25 +1182,18 @@ function useHint(){
   g.hints=(g.hints||[]).concat(p);if(P.type==="enigma"||P.type==="playfair"||P.type==="polybius"||P.type==="bifid")g.dec.bombe=null;
   touchGame();sfx("hint");buzz("tap");toast(`Hint: letter ${p+1} is ${P.word[p]}`,2200);save();render();
 }
-/* score: difficulty × guesses × hints × speed × hard mode */
-const STAR_MULT=[1,1.2,1.4,1.7,2],GUESS_MULT=[1,.85,.72,.6,.48,.36];
-function computeScore(g,P){
-  if(g.status!=="won")return 0;
-  const t=(g.ms||0)/1000,speed=t<=60?1.3:t>=600?1:1.3-.3*(t-60)/540;
-  return Math.round(1000*STAR_MULT[TYPES[P.type].stars-1]*GUESS_MULT[g.guesses.length-1]*Math.pow(.8,(g.hints||[]).length)*speed*(g.hard?1.5:1)/10)*10;
-}
 function recordFinish(g){
   if(g.counted)return;g.counted=true;
-  const won=g.status==="won",sc=g.score||0;
+  const won=g.status==="won",n=g.guesses.length;
   const b=stats.byType[P.type]||(stats.byType[P.type]={played:0,won:0,guesses:0,best:0});
-  b.played++;if(won){b.won++;b.guesses+=g.guesses.length;b.best=Math.max(b.best,sc);}
+  b.played++;if(won){b.won++;b.guesses+=n;b.fewest=Math.min(b.fewest||MAXG,n);}
   if(state.mode==="daily"){
     stats.played++;
-    if(won){stats.won++;stats.dist[g.guesses.length-1]++;stats.streak=stats.lastWon===g.n-1?stats.streak+1:1;stats.lastWon=g.n;stats.best=Math.max(stats.best,stats.streak);
-      stats.bestScore=Math.max(stats.bestScore,sc);stats.totalScore+=sc;maybeQueueReview();}
+    if(won){stats.won++;stats.dist[n-1]=(stats.dist[n-1]||0)+1;stats.streak=stats.lastWon===g.n-1?stats.streak+1:1;stats.lastWon=g.n;stats.best=Math.max(stats.best,stats.streak);
+      maybeQueueReview();}
     else stats.streak=0;
   }else if(state.mode==="practice"){settings.practiceDone=(settings.practiceDone||0)+1;saveSettings();if(settings.practiceDone%ADS.everyPractice===0)adDue=true;
-  }else if(state.mode==="weekend"){stats.weekend.played++;if(won){stats.weekend.won++;stats.weekend.best=Math.max(stats.weekend.best,sc);}}
+  }else if(state.mode==="weekend"){stats.weekend.played++;if(won)stats.weekend.won++;}
 }
 
 /* ---------- settings, sound and touch ---------- */
@@ -1351,13 +1345,14 @@ function placeCoach(){
 
 /* ---------- sharing ---------- */
 const TCODE={shift:"SHF",railfence:"RAIL",pigpen:"PIG",autokey:"AUTO",morse:"MRS",scramble:"SCR",vig:"VIG",beaufort:"BEAU",affine:"AFF",keyword:"KEY",sub:"SUB",polybius:"POLY",adfgvx:"ADFG",running:"RUN",playfair:"PLAY",bifid:"BIF",enigma:"ENIG",double:"DBL"};
-function challengeCode(g){return `${TCODE[P.type]}-${state.practice.seed.toString(36).toUpperCase()}${g.status==="won"?"-"+g.score:""}`;}
+function challengeCode(g){return `${TCODE[P.type]}-${state.practice.seed.toString(36).toUpperCase()}${g.status==="won"?"-"+g.guesses.length:""}`;}
 function playCode(v){
   const m=String(v).trim().toUpperCase().replace(/\s+/g,"").match(/^([A-Z]{3,4})-([0-9A-Z]{1,7})(?:-(\d{1,6}))?$/);
   const type=m&&Object.keys(TCODE).find(k=>TCODE[k]===m[1]);
   if(!type){toast("That code doesn't look right: it should look like VIG-4K9Z2",2600);return false;}
-  practiceType(type,parseInt(m[2],36)>>>0,m[3]?{score:+m[3]}:null);
-  toast(m[3]?`Friend's puzzle loaded: beat ${fmtPts(+m[3])}`:"Friend's puzzle loaded",2200);return true;
+  const fg=m[3]&&+m[3]>=1&&+m[3]<=MAXG?+m[3]:0;   /* older codes carried points instead: those just load the puzzle */
+  practiceType(type,parseInt(m[2],36)>>>0,fg?{guesses:fg}:null);
+  toast(fg?`Friend's puzzle loaded: they cracked it in ${fg}/${MAXG}`:"Friend's puzzle loaded",2200);return true;
 }
 /* links from the website: ?practice=enigma opens that cipher, ?code=VIG-4K9Z2 loads a friend's puzzle */
 function linkTarget(){
@@ -1379,7 +1374,8 @@ async function shareTextOnly(text,title){
 }
 function challengeFriend(){
   const g=G(),T=TYPES[P.type],code=challengeCode(g);
-  shareTextOnly(`Can you beat ${fmtPts(g.score)} points on this ${T.short} puzzle? Open Cyrune, go to Menu → Friend's challenge and enter ${code}`,"Challenge a friend");
+  const brag=g.status==="won"?`I cracked this ${T.short} puzzle in ${g.guesses.length}/${MAXG}. Can you do better?`:`I couldn't crack this ${T.short} puzzle. Can you?`;
+  shareTextOnly(`${brag} Open Cyrune, go to Menu → Friend's challenge and enter ${code}`,"Challenge a friend");
 }
 /* the result card: drawn on a canvas so it can be shared as a picture */
 async function makeCard(){
@@ -1400,7 +1396,7 @@ async function makeCard(){
   g.guesses.forEach(w=>{score(w,P.word).forEach((r,i)=>{x.fillStyle=C[r];const px=gx+i*(sq+gap);x.beginPath();x.roundRect?x.roundRect(px,gy,sq,sq,10):x.rect(px,gy,sq,sq);x.fill();});gy+=sq+gap;});
   gy=Math.max(gy,580+3*(sq+gap))+50;
   x.font="88px 'Saira Stencil One', Impact, sans-serif";x.fillStyle=g.status==="won"?"#86d3b0":"#ef8d74";
-  x.fillText(g.status==="won"?`${g.guesses.length}/6 · ${fmtPts(g.score)} pts`:"Not cracked",W/2,gy);
+  x.fillText(g.status==="won"?`Cracked in ${g.guesses.length}/${MAXG}`:"Not cracked",W/2,gy);
   x.font="600 32px 'Martian Mono', ui-monospace, monospace";x.fillStyle="#9d917e";
   const bits=[fmtTime(g.ms||0)];if((g.hints||[]).length)bits.push(`${g.hints.length} hint${g.hints.length>1?"s":""}`);if(g.hard)bits.push("hard mode");
   x.fillText(bits.join("  ·  "),W/2,gy+62);
@@ -1503,10 +1499,10 @@ function menuHTML(){
     <button data-menu="feedback">Send feedback <span>email</span></button>
   </div>
   <h3>Friend's challenge</h3>
-  <p style="font-size:13px;color:var(--dim)">Got a code from a friend? Play their exact puzzle and see who scores higher.</p>
+  <p style="font-size:13px;color:var(--dim)">Got a code from a friend? Play their exact puzzle and see who needs fewer guesses.</p>
   <div class="codebox"><input id="codeIn" placeholder="VIG-4K9Z2" maxlength="24" autocomplete="off" autocapitalize="characters" spellcheck="false" aria-label="Challenge code"><button class="btn" data-menu="code">Play</button></div>
   <h3>Settings</h3>
-  ${sw("hard","Hard mode","No key dials, decoders or helpers: just you and the encrypted letters. Scores count 1.5×. Starts with your next new puzzle.")}
+  ${sw("hard","Hard mode","No key dials, decoders or helpers: just you and the encrypted letters. Your shared result gets a *. Starts with your next new puzzle.")}
   ${sw("sound","Sound","Key clicks, lamp tones and a chime when you crack it.")}
   ${sw("haptics","Vibration","A light tap on each key and a buzz when you win.")}
   ${sw("cb","Colour-blind mode","Orange and blue tiles instead of green and yellow.")}
@@ -1653,8 +1649,8 @@ function submit(){
   g.guesses.push(w);g.input="";sel=null;
   if(P.type==="enigma")g.dec.bombe=null;
   touchGame();
-  if(w===P.word)g.status="won";else if(g.guesses.length>=6)g.status="lost";
-  if(g.status!=="playing"){pauseTimer();g.score=computeScore(g,P);recordFinish(g);if(state.mode==="daily")scheduleReminders();}
+  if(w===P.word)g.status="won";else if(g.guesses.length>=MAXG)g.status="lost";
+  if(g.status!=="playing"){pauseTimer();recordFinish(g);if(state.mode==="daily")scheduleReminders();}
   save();
   revealing=true;justRevealed={row:g.guesses.length-1};render();
   const res=score(w,P.word);res.forEach((r,i)=>setTimeout(()=>sfx("tile",r),reduced?0:i*220+260));
@@ -1763,17 +1759,17 @@ function guideHTML(){
   const standalone=(window.matchMedia&&window.matchMedia("(display-mode: standalone)").matches)||navigator.standalone;
   const inst=isNative()?`<p>You're playing the Android app. Your streak and stats are saved on this phone.</p>`:standalone?`<p>You're playing the installed app. Nice.</p>`:
     `<div class="install-box"><p><b>Android (Chrome):</b> ${deferredPrompt?`tap <button class="btn" data-act="install" style="height:30px;font-size:10px">Install</button>, or`:""} open the browser menu ⋮ and choose <b>Install app</b> or <b>Add to Home screen</b>.</p><p><b>iPhone (Safari):</b> tap Share, then <b>Add to Home Screen</b>.</p>${APP_URL&&!APP_URL.startsWith("/*")?`<p>Install from the app's own address: <a href="${APP_URL}">${APP_URL.replace(/^https?:\/\//,"")}</a></p>`:""}</div>`;
-  return `<p>One new puzzle every day. Crack the encrypted five-letter word in six guesses. Each day's cipher is a surprise, picked at random from one-star Morse code up to the five-star Enigma machine. With ${GUIDE_ORDER.length} ciphers in the bag, each one turns up once every ${GUIDE_ORDER.length} days, in a random order.</p>
+  return `<p>One new puzzle every day. Crack the encrypted five-letter word in four guesses. Each day's cipher is a surprise, picked at random from one-star Morse code up to the five-star Enigma machine. With ${GUIDE_ORDER.length} ciphers in the bag, each one turns up once every ${GUIDE_ORDER.length} days, in a random order.</p>
     <h3>The ciphers, easiest first</h3><ol class="week">${weekRows}</ol>
     <h3>How to play</h3>
     <p>The glowing lamps show the encrypted word. Type a guess and press Enter.</p>
     <div class="mini" aria-hidden="true"><div class="tile correct">W</div><div class="tile absent">O</div><div class="tile present">R</div><div class="tile absent">D</div><div class="tile absent">Y</div></div>
     <div class="legend"><div><span class="sw" style="background:var(--correct)"></span>Right letter, right spot</div><div><span class="sw" style="background:var(--present)"></span>In the word, wrong spot</div><div><span class="sw" style="background:var(--absent);border:1px solid #5a4d40"></span>Not in the word</div></div>
     <p style="margin-top:10px">Under the lamps, the cream windows show your decode. Turn the key rotors (‹ ›) or tap a window and type, and when the windows spell a word, tap <b>Use</b> to drop it into your guess. Green tiles leak the key.</p>
-    <h3>Hints, scores and hard mode</h3>
-    <p><b>Hint</b>, at the top right of the card, reveals one letter (two per puzzle). Points start at 1,000 and are multiplied by the cipher's difficulty (1× for ★ up to 2× for ★★★★★), by how few guesses you needed, and by speed: up to 1.3× if you crack it inside a minute. Each hint costs 20%. <b>Hard mode</b> (in the menu) takes away every dial and decoder and counts 1.5×.</p>
+    <h3>Hints and hard mode</h3>
+    <p>You have <b>four guesses</b>, so guessing alone is risky: crack the cipher and you'll often need only one or two. <b>Hint</b>, at the top right of the card, reveals one letter (two per puzzle); hints show on your shared result. <b>Hard mode</b> (in the menu) takes away every dial and decoder, and your shared result gets a *.</p>
     <h3>Weekends, past puzzles and friends</h3>
-    <p>On Saturdays and Sundays there's an extra <b>weekend challenge</b>: one word through two ciphers. <b>Past puzzles</b> in the menu lets you play any day you missed. In Practice, <b>Challenge a friend</b> gives you a code for that exact puzzle and your score, so a friend can try to beat it.</p>
+    <p>On Saturdays and Sundays there's an extra <b>weekend challenge</b>: one word through two ciphers. <b>Past puzzles</b> in the menu lets you play any day you missed. In Practice, <b>Challenge a friend</b> gives you a code for that exact puzzle and how many guesses you took, so a friend can try to do better.</p>
     <h3>The ciphers</h3>${cards}
     <h3>Install the app</h3>${inst}`;
 }
@@ -1849,7 +1845,7 @@ function askReview(){
 const EMO={correct:"🟩",present:"🟨",absent:"⬛"};
 function emo(){return settings.cb?{correct:"🟧",present:"🟦",absent:"⬛"}:{correct:"🟩",present:"🟨",absent:"⬛"};}
 function resultLine(g){
-  const bits=[g.status==="won"?`${fmtPts(g.score)} pts`:"not cracked",fmtTime(g.ms||0)];
+  const bits=[g.status==="won"?`cracked in ${fmtTime(g.ms||0)}`:"not cracked"];
   if((g.hints||[]).length)bits.push(`${g.hints.length} hint${g.hints.length>1?"s":""}`);
   if(g.hard)bits.push("hard mode");
   return bits.join(" · ");
@@ -1857,28 +1853,28 @@ function resultLine(g){
 function shareText(){
   const g=G(),T=TYPES[P.type],sc=g.status==="won"?g.guesses.length:g.status==="lost"?"X":"…",E=emo();
   let head;
-  if(state.mode==="daily"||state.mode==="archive")head=`Cyrune No. ${g.n} · ${T.short} ${"★".repeat(T.stars)} ${sc}/6`;
-  else if(state.mode==="weekend")head=`Cyrune Weekend No. ${g.no} · ${P.label} ${sc}/6`;
-  else head=`Cyrune practice · ${T.short} ${sc}/6`;
+  if(state.mode==="daily"||state.mode==="archive")head=`Cyrune No. ${g.n} · ${T.short} ${"★".repeat(T.stars)} ${sc}/${MAXG}${g.hard?"*":""}`;
+  else if(state.mode==="weekend")head=`Cyrune Weekend No. ${g.no} · ${P.label} ${sc}/${MAXG}${g.hard?"*":""}`;
+  else head=`Cyrune practice · ${T.short} ${sc}/${MAXG}${g.hard?"*":""}`;
   let out=head+"\n"+resultLine(g)+"\n\n"+g.guesses.map(w=>score(w,P.word).map(x=>E[x]).join("")).join("\n");
-  if(state.mode==="practice")out+=`\n\nBeat my score: play code ${challengeCode(g)} in Cyrune (Menu → Friend's challenge)`;
+  if(state.mode==="practice")out+=`\n\nCan you do better? Play code ${challengeCode(g)} in Cyrune (Menu → Friend's challenge)`;
   return out;
 }
 function countdown(){const now=new Date(),t=new Date(now.getFullYear(),now.getMonth(),now.getDate()+1);let s=Math.max(0,Math.floor((t-now)/1000));const h=Math.floor(s/3600);s-=h*3600;const m=Math.floor(s/60);s-=m*60;return [h,m,s].map(x=>String(x).padStart(2,"0")).join(":");}
 function openStats(){
   const g=G(),T=TYPES[P.type],mode=state.mode;
   $("#statsTitle").textContent=mode==="daily"?`No. ${pad3(g.n)} · ${T.short}`:mode==="archive"?`No. ${pad3(g.n)} · ${T.short} (past)`:mode==="weekend"?`Weekend No. ${g.no}`:`Practice · ${T.short}`;
-  const chip=g.status==="won"?`<span class="chip won">${g.guesses.length}/6</span>`:g.status==="lost"?`<span class="chip lost">X/6</span>`:`<span class="chip playing">${g.guesses.length?"In progress":"Not started"}</span>`;
+  const chip=g.status==="won"?`<span class="chip won">${g.guesses.length}/${MAXG}</span>`:g.status==="lost"?`<span class="chip lost">X/${MAXG}</span>`:`<span class="chip playing">${g.guesses.length?"In progress":"Not started"}</span>`;
   const word=g.status!=="playing"?` <span class="mono" style="color:var(--dim)">${P.word}</span>`:"";
-  const n=todayN(),streak=stats.lastWon>=n-1?stats.streak:0,pct=stats.played?Math.round(100*stats.won/stats.played):0,max=Math.max(1,...stats.dist);
+  const n=todayN(),streak=stats.lastWon>=n-1?stats.streak:0,pct=stats.played?Math.round(100*stats.won/stats.played):0,dist=Array.from({length:MAXG},(_,i)=>stats.dist[i]||0),max=Math.max(1,...dist);
   const hi=mode==="daily"&&g.status==="won"?g.guesses.length:0;
-  const bars=stats.dist.map((v,i)=>`<div class="dist-row"><span>${i+1}</span><div class="bar${hi===i+1?" hi":""}" style="width:${Math.max(8,Math.round(100*v/max))}%">${v}</div></div>`).join("");
+  const bars=dist.map((v,i)=>`<div class="dist-row"><span>${i+1}</span><div class="bar${hi===i+1?" hi":""}" style="width:${Math.max(8,Math.round(100*v/max))}%">${v}</div></div>`).join("");
   let vs="";
-  if(mode==="practice"&&g.challenge){const f=g.challenge.score;
-    vs=g.status==="playing"?`<p class="vs">Your friend scored <b>${fmtPts(f)}</b> on this puzzle. Beat it!</p>`
-      :`<p class="vs">Your friend: <b>${fmtPts(f)}</b> · You: <b>${fmtPts(g.score)}</b> · ${g.score>f?"you win!":g.score===f?"a tie.":"they win this one."}</p>`;}
+  if(mode==="practice"&&g.challenge&&g.challenge.guesses){const f=g.challenge.guesses,me=g.status==="won"?g.guesses.length:MAXG+1;
+    vs=g.status==="playing"?`<p class="vs">Your friend cracked this in <b>${f}/${MAXG}</b>. Can you do better?</p>`
+      :`<p class="vs">Your friend: <b>${f}/${MAXG}</b> · You: <b>${g.status==="won"?me+"/"+MAXG:"X/"+MAXG}</b> · ${me<f?"you win!":me===f?"a tie.":"they win this one."}</p>`;}
   const rows=GUIDE_ORDER.concat(["double"]).filter(t=>stats.byType[t]&&stats.byType[t].played).map(t=>{const b=stats.byType[t];
-    return `<tr><td>${TYPES[t].short}</td><td>${b.played}</td><td>${Math.round(100*b.won/b.played)}%</td><td>${b.won?(b.guesses/b.won).toFixed(1):"–"}</td><td>${b.best?fmtPts(b.best):"–"}</td></tr>`;}).join("");
+    return `<tr><td>${TYPES[t].short}</td><td>${b.played}</td><td>${Math.round(100*b.won/b.played)}%</td><td>${b.won?(b.guesses/b.won).toFixed(1):"–"}</td><td>${b.fewest?b.fewest+"/"+MAXG:"–"}</td></tr>`;}).join("");
   const W=stats.weekend;
   $("#statsBody").innerHTML=`
     <ul class="results"><li>${starHTML(T.stars)}<span class="nm">${mode==="weekend"?P.label:T.name}${word}</span>${chip}</li></ul>
@@ -1892,10 +1888,9 @@ function openStats(){
     <div id="fallbackSlot"></div>
     <h3>Daily record</h3>
     <div class="statgrid"><div class="stat"><b>${stats.played}</b><span>Played</span></div><div class="stat"><b>${pct}</b><span>Win %</span></div><div class="stat"><b>${streak}</b><span>Streak</span></div><div class="stat"><b>${stats.best}</b><span>Best streak</span></div></div>
-    <div class="statgrid two"><div class="stat"><b>${fmtPts(stats.bestScore)}</b><span>Best score</span></div><div class="stat"><b>${fmtPts(stats.totalScore)}</b><span>Total points</span></div></div>
     <h3>Guesses to crack</h3><div class="dist">${bars}</div>
     ${rows?`<h3>By cipher (every mode)</h3><div class="tblwrap"><table class="bytype"><thead><tr><th>Cipher</th><th>Played</th><th>Won</th><th>Avg</th><th>Best</th></tr></thead><tbody>${rows}</tbody></table></div>`:""}
-    ${W.played?`<p class="countdown">Weekend challenges: ${W.won} of ${W.played} cracked · best ${fmtPts(W.best)} pts</p>`:""}
+    ${W.played?`<p class="countdown">Weekend challenges: ${W.won} of ${W.played} cracked</p>`:""}
     <p class="countdown">Next daily puzzle in <b id="cd">${countdown()}</b> · cipher unknown</p>`;
   showModal("statsModal");showBanner();
   cdTimer=setInterval(()=>{const el=$("#cd");if(el)el.textContent=countdown();if(ensureToday()){save();if(state.mode==="daily"){refresh();closeModal();bootLamps=true;render();}}},1000);
