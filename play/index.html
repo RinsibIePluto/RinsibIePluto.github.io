@@ -138,7 +138,8 @@ body.ad-on .modal{padding-bottom:calc(16px + var(--ad-h,60px) + var(--safe-area-
 .ictime{font-family:var(--f-mono);font-variant-numeric:tabular-nums;color:var(--ivory);letter-spacing:.04em}
 .window.hintw{box-shadow:inset 0 -4px 0 var(--lamp)}
 .lamps{display:flex;justify-content:center;gap:10px;margin-top:6px}
-.lamp-col{display:flex;flex-direction:column;align-items:center;gap:4px}
+.lamp-col{display:flex;flex-direction:column;align-items:center;gap:4px;position:relative}
+.lord{position:absolute;top:-7px;right:-5px;z-index:2;min-width:17px;height:17px;padding:0 3px;border-radius:9px;background:var(--brass);color:#1a1410;font:700 10px/17px var(--f-mono);text-align:center;box-shadow:0 1px 3px rgba(0,0,0,.6)}
 .lamp{width:36px;height:36px;border-radius:50%;display:grid;place-items:center;background:radial-gradient(circle at 50% 38%,#33291f 0%,#130f0c 72%);border:2px solid #5b4b38;box-shadow:inset 0 2px 4px rgba(0,0,0,.6),0 0 0 2px #120e0b;font-family:var(--f-mono);font-weight:700;font-size:16px;color:var(--lamp);text-shadow:0 0 6px rgba(255,190,90,.85),0 0 16px rgba(255,160,50,.45)}
 .lsub{font-family:var(--f-mono);font-weight:700;font-size:11px;line-height:12px;height:12px;color:var(--brass);margin:-1px 0}
 .mcol{display:flex;flex-direction:column;align-items:center;gap:7px;width:100%}
@@ -167,6 +168,18 @@ body.ad-on .modal{padding-bottom:calc(16px + var(--ad-h,60px) + var(--safe-area-
 .lamp.pig svg circle,.pg svg circle{fill:currentColor;stroke:none}
 .pg{color:var(--lamp);display:grid;place-items:center}
 .mchart.pigs div{justify-content:space-between}
+.mchart.adfg{display:block}
+.mchart.adfg h3{margin:14px 0 6px}
+.adfg-p{font-size:13px;line-height:1.45;color:#e2d8c2;margin:6px 0}
+.adfg-p b{color:var(--ivory)}
+.adfg-sq,.adfg-rd{border-collapse:collapse;margin:8px auto;font-family:var(--f-mono)}
+.adfg-sq th,.adfg-sq td{width:34px;height:30px;text-align:center;border:1px solid var(--line);font-size:14px}
+.adfg-sq th{color:var(--brass);background:#120e0b}
+.adfg-sq td{color:var(--ivory);background:#1b1511}
+.adfg-rd th,.adfg-rd td{min-width:44px;height:28px;text-align:center;border:1px solid var(--line);font-size:12px}
+.adfg-rd th{color:var(--brass);background:#120e0b;font-weight:600;padding:0 6px}
+.adfg-rd td{font-weight:700;color:#1a1410}
+.adfg-rd .l1{background:#e8c27a}.adfg-rd .l2{background:#9fd3a8}.adfg-rd .l3{background:#f2a6a0}.adfg-rd .l4{background:#a9c8f0}.adfg-rd .l5{background:#d9b8f0}
 .pgrow{display:inline-flex;gap:6px;vertical-align:middle}
 .pgrow .pg svg{width:18px;height:18px}
 .rotor.wide .rwin{width:58px;font-size:12px}
@@ -1043,7 +1056,8 @@ function renderIntercept(){
     if(t==="scramble"&&!done&&!H)sub=`<span class="lsub" aria-label="Shifted letter">${A[(idx(tok)-(g.dec.k||0)+26)%26]}</span>`;
     if(t==="running"&&!H){const kv=done?P.key.kw[p]:(g.dec.key[p]==null?"":A[g.dec.key[p]]);
       sub=`<button class="kbox${!done&&sel&&sel.kpos===p?" sel":""}" data-kpos="${p}" ${done?"disabled":""} aria-label="Key letter ${p+1}">${kv||"·"}</button>`;}
-    return `<div class="lamp-col">${lamp}${sub}${win(p,w,cls)}</div>`;
+    const ord=TAP&&!done&&used.includes(p)?`<span class="lord" aria-hidden="true">${g.dec.slots.indexOf(p)+1}</span>`:"";   /* which tap this lamp was */
+    return `<div class="lamp-col">${ord}${lamp}${sub}${win(p,w,cls)}</div>`;
   }).join("");
   bootLamps=false;
   const d=$("#decoder");
@@ -1105,7 +1119,7 @@ function renderIntercept(){
       d.innerHTML=`<div class="enigma pigrows${gs.length===4?" tight":""}">${rows.map(r=>`<div class="erow">${r}</div>`).join("")}</div>`;break;}
     case"adfgvx":{
       const any=D.slots.some(x=>x!=null);
-      d.innerHTML=`<span class="dlabel">Tap the columns<br>in their real order</span><span class="spacer"></span>${any?`<button class="ghost" data-act="clear">Clear</button>`:""}${use(full)}`;break;}
+      d.innerHTML=`<span class="dlabel">Tap columns<br>in order</span><span class="spacer"></span>${any?`<button class="ghost" data-act="clear">Clear</button>`:""}<button class="ghost line" data-act="adfgchart">Chart</button>${use(full)}`;break;}
     case"polybius":case"bifid":
     case"playfair":{
       const b=D.bombe,pinsN=Object.keys(pinsOf(g,P)).length,cribN=Object.keys(D.crib).length,onStop=b&&b.n>0&&b.n<=MAX_STOPS;
@@ -1310,7 +1324,7 @@ const WT={
   keyword:"Tap the keyword box and type a word. The windows decode with the alphabet it builds.",
   sub:"Tap a window and type the letter you think it hides. Matching lamps fill in together.",
   polybius:"Each lamp is a row and column in a 5×5 square. Pin letters you know by tapping a window, then Test keywords.",
-  adfgvx:"Each lamp is a column of two signals. Tap the columns in their real order and the windows rebuild the letters.",
+  adfgvx:"Each lamp is a column: a top and a bottom signal. Tap them in the order they were written; the windows pair the top signals left to right, then the bottom ones, and look each pair up in the square (Chart). A digit means a wrong order.",
   running:"Type into either row, the small key boxes or the windows. Both rows have to end up as real words.",
   playfair:"Pin letters you know by tapping a window, then Test keywords and step through the squares that fit.",
   bifid:"Pin letters you know by tapping a window, then Test keywords and step through the squares that fit.",
@@ -1734,7 +1748,7 @@ const GUIDE={
     ex:"Keyword CRANE: HELLO → "+ENC.bifid("HELLO","CRANE"),crack:"A single wrong letter in the key scrambles two letters of the message, so partial decodes are rare. Pin what you know, then Test keywords and read through the squares that fit.",
     tryLabel:"Keyword CRANE",run:w=>ENC.bifid(w,"CRANE")},
   adfgvx:{how:"The German army's cipher of 1918. Each letter becomes two of the letters A D F G V X, chosen because they sound very different in Morse code. The ten signals are written in two rows under five columns, and the columns are sent in a secret order. Here the square is public, so only the column order is secret.",
-    ex:"Order 2-5-1-4-3: HELLO → "+ENC.adfgvx("HELLO",[1,4,0,3,2]).match(/../g).join(" "),crack:"Tap the columns in the order you think they were written. Each pair of signals is one letter, and the third letter straddles both rows, so a wrong order shows up quickly as digits or nonsense.",
+    ex:"Order 2-5-1-4-3: HELLO → "+ENC.adfgvx("HELLO",[1,4,0,3,2]).match(/../g).join(" "),crack:"Tap the lamps in the order you think the columns were written; a small number shows each one's place. The windows read the top signals of taps 1 to 5, then the bottom ones, two at a time: letter 1 is the tops of taps 1 and 2, letter 3 is the top of tap 5 and the bottom of tap 1. Tap Chart for the square. A wrong order shows up quickly as digits or nonsense, and a green tile from a guess tells you two signals.",
     tryLabel:"Order 2-5-1-4-3",run:w=>w.length===5?ENC.adfgvx(w,[1,4,0,3,2]).match(/../g).join(" "):"type 5 letters"},
   double:{how:"The weekend challenge: two ciphers stacked. First a Vigenère, Beaufort, Affine or Autokey cipher, then the positions are shuffled. It runs all weekend, alongside the daily puzzle.",
     ex:"Vigenère KO, then order 2-5-1-4-3: HELLO → "+ENC.scramble(ENC.vig("HELLO",[10,14]),[1,4,0,3,2]),crack:"Work in two steps: tap the lamps in the order you think they belong, then set the rotors. Greens tell you both where a letter goes and what the key does there.",
@@ -1774,6 +1788,19 @@ function guideHTML(){
     <h3>Install the app</h3>${inst}`;
 }
 function pigChartHTML(){return [...A].map(c=>`<div><b>${c}</b><span class="pg">${pigSVG(c)}</span></div>`).join("");}
+/* ADFGVX: the public square, plus which window each signal feeds once the columns are in order */
+function adfgChartHTML(){
+  const H=[..."ADFGVX"],sq=H.map((r,i)=>`<tr><th>${r}</th>${H.map((c,j)=>`<td>${ADFG_SQ[i*6+j]}</td>`).join("")}</tr>`).join("");
+  const top=[1,1,2,2,3],bot=[3,4,4,5,5];
+  return `<p class="adfg-p">Each letter is two signals: the <b>first picks the row</b>, the <b>second the column</b>. AA = A, AD = B, DF = I.</p>
+  <table class="adfg-sq"><tr><th></th>${H.map(h=>`<th>${h}</th>`).join("")}</tr>${sq}</table>
+  <h3>How the windows read</h3>
+  <p class="adfg-p">Tap the lamps in the order the columns were written. The windows pair up the <b>top</b> signals left to right, then the <b>bottom</b> ones. Each number below is the word letter that signal belongs to:</p>
+  <table class="adfg-rd"><tr><th>Tap</th>${[1,2,3,4,5].map(n=>`<th>${n}</th>`).join("")}</tr>
+    <tr><th>Top</th>${top.map(n=>`<td class="l${n}">${n}</td>`).join("")}</tr>
+    <tr><th>Bottom</th>${bot.map(n=>`<td class="l${n}">${n}</td>`).join("")}</tr></table>
+  <p class="adfg-p">So letter 3 is the top of tap 5 plus the bottom of tap 1. A digit in a window means the order is wrong. Guess a word first: a green tile tells you one letter, and so two of the signals.</p>`;
+}
 function chartHTML(){return Object.keys(MORSE).map(c=>`<div><b>${c}</b><span>${MORSE[c]}</span></div>`).join("");}
 function openGuide(focus){
   $("#guideBody").innerHTML=guideHTML();showModal("guideModal");
@@ -1923,6 +1950,7 @@ function bind(){
       if(a==="use")useDecode();
       else if(a==="hint")useHint();
       else if(a==="chart"){$("#chartTitle").textContent="Morse chart";$("#mchart").className="mchart";$("#mchart").innerHTML=chartHTML();showModal("chartModal");}
+      else if(a==="adfgchart"){$("#chartTitle").textContent="ADFGVX chart";$("#mchart").className="mchart adfg";$("#mchart").innerHTML=adfgChartHTML();showModal("chartModal");}
       else if(a==="pigchart"){$("#chartTitle").textContent="Pigpen chart";$("#mchart").className="mchart pigs";$("#mchart").innerHTML=pigChartHTML();showModal("chartModal");}
       else if(a==="clear"){
         if(t==="enigma"||KEYWORD_TESTED.includes(t)){D.crib={};D.bombe=null;}
